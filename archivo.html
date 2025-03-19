@@ -996,6 +996,7 @@ Este equilibrio se logra mediante:
                 const downloadLink = document.createElement('a');
                 downloadLink.className = 'btn btn-download';
                 downloadLink.href = encodedPdfPath;
+                downloadLink.style.marginTop = '20px';
                 downloadLink.download = `${fileId}.pdf`;
                 downloadLink.textContent = 'Descargar PDF';
                 modalActions.appendChild(downloadLink);
