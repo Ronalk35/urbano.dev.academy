@@ -1,0 +1,442 @@
+-- Creación de la base de datos de ejemplo
+CREATE DATABASE OptimizacionSQL;
+GO
+
+USE OptimizacionSQL;
+GO
+
+-- Creación de tablas
+CREATE TABLE Departamentos (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(100) NOT NULL,
+    Ubicacion NVARCHAR(100),
+    Presupuesto DECIMAL(18,2)
+);
+
+CREATE TABLE Empleados (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(50) NOT NULL,
+    Apellido NVARCHAR(50) NOT NULL,
+    ID_Departamento INT REFERENCES Departamentos(ID),
+    Fecha_Contratacion DATE,
+    Salario DECIMAL(18,2),
+    Email NVARCHAR(100)
+);
+
+CREATE TABLE Clientes (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(50) NOT NULL,
+    Apellido NVARCHAR(50) NOT NULL,
+    Email NVARCHAR(100),
+    Telefono NVARCHAR(20),
+    Direccion NVARCHAR(200),
+    Ciudad NVARCHAR(50),
+    Region NVARCHAR(50),
+    Fecha_Registro DATE
+);
+
+CREATE TABLE Productos (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    Nombre NVARCHAR(100) NOT NULL,
+    Descripcion NVARCHAR(500),
+    Categoria NVARCHAR(50),
+    Precio DECIMAL(18,2) NOT NULL,
+    Stock INT NOT NULL,
+    UltimaActualizacion DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Ventas (
+    ID INT PRIMARY KEY IDENTITY(1,1),
+    ID_Cliente INT REFERENCES Clientes(ID),
+    ID_Producto INT REFERENCES Productos(ID),
+    ID_Empleado INT REFERENCES Empleados(ID),
+    Fecha DATETIME NOT NULL,
+    Cantidad INT NOT NULL,
+    Monto DECIMAL(18,2) NOT NULL,
+    Region NVARCHAR(50)
+);
+
+-- Inserción de datos de ejemplo
+INSERT INTO Departamentos (Nombre, Ubicacion, Presupuesto)
+VALUES 
+    ('IT', 'Piso 3', 500000),
+    ('Ventas', 'Piso 1', 300000),
+    ('Marketing', 'Piso 2', 250000),
+    ('Recursos Humanos', 'Piso 1', 150000),
+    ('Contabilidad', 'Piso 2', 200000);
+
+-- Insertar empleados con distintas fechas de contratación
+INSERT INTO Empleados (Nombre, Apellido, ID_Departamento, Fecha_Contratacion, Salario, Email)
+VALUES
+    ('Juan', 'Perez', 1, '2019-05-15', 65000, 'juan.perez@empresa.com'),
+    ('Maria', 'Rodriguez', 2, '2020-02-10', 55000, 'maria.rodriguez@empresa.com'),
+    ('Carlos', 'Gomez', 1, '2018-11-01', 70000, 'carlos.gomez@empresa.com'),
+    ('Ana', 'Martinez', 3, '2021-03-22', 60000, 'ana.martinez@empresa.com'),
+    ('Roberto', 'Lopez', 4, '2019-08-05', 52000, 'roberto.lopez@empresa.com'),
+    ('Sofia', 'Ramirez', 2, '2022-01-15', 58000, 'sofia.ramirez@empresa.com'),
+    ('Alejandro', 'Torres', 5, '2020-06-18', 62000, 'alejandro.torres@empresa.com'),
+    ('Lucia', 'Sanchez', 3, '2023-02-10', 59000, 'lucia.sanchez@empresa.com'),
+    ('Miguel', 'Diaz', 1, '2021-09-30', 68000, 'miguel.diaz@empresa.com'),
+    ('Pablo', 'Fernandez', 2, '2022-05-12', 57000, 'pablo.fernandez@empresa.com'),
+    ('Elena', 'Garcia', 4, '2023-01-20', 54000, 'elena.garcia@empresa.com'),
+    ('Daniel', 'Ortiz', 3, '2022-08-08', 61000, 'daniel.ortiz@empresa.com'),
+    ('Monica', 'Vazquez', 5, '2021-11-15', 63000, 'monica.vazquez@empresa.com'),
+    ('Javier', 'Flores', 1, '2020-04-22', 69000, 'javier.flores@empresa.com'),
+    ('Laura', 'Castro', 2, '2023-03-18', 56000, 'laura.castro@empresa.com');
+
+-- Insertar clientes
+INSERT INTO Clientes (Nombre, Apellido, Email, Telefono, Direccion, Ciudad, Region, Fecha_Registro)
+VALUES
+    ('Pedro', 'Hernandez', 'pedro.hernandez@mail.com', '555-1234', 'Calle Principal 123', 'Madrid', 'Centro', '2020-01-10'),
+    ('Isabel', 'Morales', 'isabel.morales@mail.com', '555-5678', 'Avenida Central 456', 'Barcelona', 'Este', '2020-03-15'),
+    ('Ricardo', 'Silva', 'ricardo.silva@mail.com', '555-9012', 'Plaza Mayor 789', 'Valencia', 'Este', '2021-02-20'),
+    ('Carmen', 'Jimenez', 'carmen.jimenez@mail.com', '555-3456', 'Calle Secundaria 234', 'Sevilla', 'Sur', '2021-05-05'),
+    ('Fernando', 'Ruiz', 'fernando.ruiz@mail.com', '555-7890', 'Avenida Norte 567', 'Zaragoza', 'Norte', '2022-01-12'),
+    ('Teresa', 'Vargas', 'teresa.vargas@mail.com', '555-2345', 'Calle Sur 890', 'Malaga', 'Sur', '2022-03-30'),
+    ('Antonio', 'Mendoza', 'antonio.mendoza@mail.com', '555-6789', 'Avenida Oeste 123', 'Bilbao', 'Norte', '2022-07-18'),
+    ('Julia', 'Navarro', 'julia.navarro@mail.com', '555-0123', 'Plaza Central 456', 'Murcia', 'Este', '2023-01-25'),
+    ('Sergio', 'Guerrero', 'sergio.guerrero@mail.com', '555-4567', 'Calle Este 789', 'Alicante', 'Este', '2023-04-08'),
+    ('Patricia', 'Aguirre', 'patricia.aguirre@mail.com', '555-8901', 'Avenida Sur 012', 'Cordoba', 'Sur', '2023-06-15');
+
+-- Insertar productos
+INSERT INTO Productos (Nombre, Descripcion, Categoria, Precio, Stock)
+VALUES
+    ('Laptop Pro', 'Laptop de alto rendimiento para profesionales', 'Electrónicos', 1299.99, 25),
+    ('Monitor 27"', 'Monitor de alta definición de 27 pulgadas', 'Electrónicos', 299.99, 50),
+    ('Teclado Ergonómico', 'Teclado con diseño ergonómico para mayor comodidad', 'Electrónicos', 79.99, 100),
+    ('Mouse Inalámbrico', 'Mouse con tecnología inalámbrica de última generación', 'Electrónicos', 49.99, 150),
+    ('Impresora Multifuncional', 'Impresora, escáner y copiadora todo en uno', 'Electrónicos', 199.99, 30),
+    ('Auriculares Bluetooth', 'Auriculares inalámbricos con cancelación de ruido', 'Electrónicos', 129.99, 75),
+    ('Tablet 10"', 'Tablet de 10 pulgadas con pantalla táctil', 'Electrónicos', 349.99, 40),
+    ('Disco Duro Externo 1TB', 'Disco duro portátil de 1 terabyte', 'Electrónicos', 89.99, 60),
+    ('Cámara Digital', 'Cámara fotográfica digital de alta resolución', 'Electrónicos', 399.99, 20),
+    ('Altavoces Bluetooth', 'Sistema de altavoces inalámbricos para el hogar', 'Electrónicos', 159.99, 35),
+    ('Router WiFi', 'Router de alta velocidad para redes domésticas', 'Electrónicos', 129.99, 45),
+    ('USB Flash Drive 64GB', 'Unidad de memoria USB de 64 gigabytes', 'Electrónicos', 24.99, 200),
+    ('Batería Externa', 'Batería portátil para dispositivos móviles', 'Electrónicos', 39.99, 120),
+    ('Webcam HD', 'Cámara web de alta definición para videoconferencias', 'Electrónicos', 69.99, 55),
+    ('Smartwatch', 'Reloj inteligente con múltiples funciones', 'Electrónicos', 199.99, 25);
+
+-- Insertar ventas de 2023
+INSERT INTO Ventas (ID_Cliente, ID_Producto, ID_Empleado, Fecha, Cantidad, Monto, Region)
+VALUES
+    (1, 3, 2, '2023-01-15 10:30:00', 2, 159.98, 'Centro'),
+    (2, 5, 2, '2023-01-20 14:45:00', 1, 199.99, 'Este'),
+    (3, 8, 6, '2023-02-05 11:15:00', 3, 269.97, 'Este'),
+    (4, 2, 6, '2023-02-12 09:30:00', 2, 599.98, 'Sur'),
+    (5, 10, 10, '2023-03-03 16:20:00', 1, 159.99, 'Norte'),
+    (1, 12, 10, '2023-03-10 13:40:00', 5, 124.95, 'Centro'),
+    (6, 7, 15, '2023-03-18 15:00:00', 1, 349.99, 'Sur'),
+    (7, 1, 15, '2023-04-02 10:10:00', 1, 1299.99, 'Norte'),
+    (8, 4, 6, '2023-04-15 11:45:00', 2, 99.98, 'Este'),
+    (9, 9, 6, '2023-04-22 14:30:00', 1, 399.99, 'Este'),
+    (10, 6, 10, '2023-05-05 09:15:00', 2, 259.98, 'Sur'),
+    (2, 11, 10, '2023-05-14 16:50:00', 1, 129.99, 'Este'),
+    (3, 13, 15, '2023-05-20 12:30:00', 3, 119.97, 'Este'),
+    (4, 14, 15, '2023-06-03 11:00:00', 1, 69.99, 'Sur'),
+    (5, 3, 2, '2023-06-10 15:30:00', 2, 159.98, 'Norte'),
+    (6, 8, 2, '2023-06-18 10:20:00', 1, 89.99, 'Sur'),
+    (7, 5, 6, '2023-07-02 13:45:00', 1, 199.99, 'Norte'),
+    (8, 10, 6, '2023-07-15 16:15:00', 2, 319.98, 'Este'),
+    (9, 2, 10, '2023-07-25 11:30:00', 1, 299.99, 'Este'),
+    (10, 7, 10, '2023-08-05 14:00:00', 1, 349.99, 'Sur'),
+    (1, 15, 15, '2023-08-12 09:45:00', 1, 199.99, 'Centro'),
+    (2, 1, 15, '2023-08-20 13:30:00', 1, 1299.99, 'Este'),
+    (3, 4, 2, '2023-09-03 15:20:00', 3, 149.97, 'Este'),
+    (4, 9, 2, '2023-09-10 10:50:00', 1, 399.99, 'Sur'),
+    (5, 6, 6, '2023-09-18 14:15:00', 2, 259.98, 'Norte'),
+    (6, 11, 6, '2023-10-02 11:30:00', 1, 129.99, 'Sur'),
+    (7, 13, 10, '2023-10-15 16:40:00', 2, 79.98, 'Norte'),
+    (8, 14, 10, '2023-10-22 09:30:00', 1, 69.99, 'Este'),
+    (9, 3, 15, '2023-11-05 14:50:00', 2, 159.98, 'Este'),
+    (10, 8, 15, '2023-11-12 12:15:00', 3, 269.97, 'Sur'),
+    (1, 5, 2, '2023-11-20 15:30:00', 1, 199.99, 'Centro'),
+    (2, 10, 2, '2023-12-03 10:45:00', 2, 319.98, 'Este'),
+    (3, 2, 6, '2023-12-10 13:00:00', 1, 299.99, 'Este'),
+    (4, 7, 6, '2023-12-18 16:20:00', 1, 349.99, 'Sur'),
+    (5, 15, 10, '2023-12-25 11:45:00', 2, 399.98, 'Norte');
+
+-- Insertar ventas de 2022 (para tener datos históricos)
+INSERT INTO Ventas (ID_Cliente, ID_Producto, ID_Empleado, Fecha, Cantidad, Monto, Region)
+VALUES
+    (5, 12, 10, '2022-03-05 10:20:00', 3, 74.97, 'Norte'),
+    (6, 3, 10, '2022-03-18 13:40:00', 2, 159.98, 'Sur'),
+    (7, 8, 15, '2022-04-02 15:15:00', 1, 89.99, 'Norte'),
+    (8, 5, 15, '2022-04-12 11:30:00', 1, 199.99, 'Este'),
+    (9, 10, 6, '2022-04-25 14:50:00', 2, 319.98, 'Este'),
+    (10, 2, 6, '2022-05-08 09:15:00', 1, 299.99, 'Sur'),
+    (1, 7, 10, '2022-05-15 16:30:00', 1, 349.99, 'Centro'),
+    (2, 15, 10, '2022-05-28 13:45:00', 1, 199.99, 'Este'),
+    (3, 1, 15, '2022-06-10 10:50:00', 1, 1299.99, 'Este'),
+    (4, 4, 15, '2022-06-20 15:20:00', 3, 149.97, 'Sur'),
+    (5, 9, 2, '2022-07-05 12:30:00', 1, 399.99, 'Norte');
+
+-- Actualizar algunos productos con stock bajo para ejemplos de consulta
+UPDATE Productos SET Stock = 8 WHERE ID = 1;  -- Laptop Pro
+UPDATE Productos SET Stock = 5 WHERE ID = 9;  -- Cámara Digital
+UPDATE Productos SET Stock = 7 WHERE ID = 15; -- Smartwatch
+
+-- ============================================================
+-- EJEMPLO DE OPTIMIZACIÓN MEDIANTE ÍNDICES Y CONSULTAS
+-- ============================================================
+
+-- Creación de índice clustered
+CREATE CLUSTERED INDEX IX_Empleados_ID 
+ON Empleados(ID);
+
+-- Ejemplo de índice non-clustered
+CREATE NONCLUSTERED INDEX IX_Empleados_Apellido 
+ON Empleados(Apellido);
+
+-- Índice compuesto con múltiples columnas
+CREATE NONCLUSTERED INDEX IX_Ventas_Fecha_Producto 
+ON Ventas(Fecha, ID_Producto);
+
+-- Visualizar plan de ejecución
+SET SHOWPLAN_ALL ON;
+GO
+
+SELECT e.Nombre, e.Apellido, d.Nombre as Departamento
+FROM Empleados e
+JOIN Departamentos d ON e.ID_Departamento = d.ID
+WHERE e.Fecha_Contratacion > '2020-01-01';
+
+SET SHOWPLAN_ALL OFF;
+GO
+
+-- Prácticas no recomendadas (evitar funciones en columnas)
+-- Evitar
+SELECT * FROM Empleados WHERE YEAR(Fecha_Contratacion) = 2023;
+
+-- Preferir (permite usar índices)
+SELECT * FROM Empleados 
+WHERE Fecha_Contratacion >= '2023-01-01' 
+AND Fecha_Contratacion < '2024-01-01';
+
+-- Optimizado para transferencia de datos 
+-- (SELECT específico y paginación)
+SELECT ID, Nombre, Apellido 
+FROM Empleados 
+WHERE ID_Departamento = 1 
+ORDER BY Fecha_Contratacion DESC 
+OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
+
+-- Actualizar estadísticas
+UPDATE STATISTICS Ventas;
+
+-- Crear estadísticas específicas
+CREATE STATISTICS Stats_Ventas_Region 
+ON Ventas(Region);
+
+-- Ver estadísticas de una tabla
+DBCC SHOW_STATISTICS('Ventas', 'IX_Ventas_Fecha_Producto');
+
+-- Antes: Consulta lenta para reporte de ventas
+SELECT c.Nombre, c.Apellido,
+       SUM(v.Monto) as TotalCompras,
+       COUNT(v.ID) as NumeroTransacciones
+FROM Clientes c
+LEFT JOIN Ventas v ON c.ID = v.ID_Cliente
+WHERE v.Fecha BETWEEN '2023-01-01' AND '2023-12-31'
+GROUP BY c.Nombre, c.Apellido
+ORDER BY TotalCompras DESC;
+
+-- Después: Consulta optimizada
+SELECT c.Nombre, c.Apellido,
+       SUM(v.Monto) as TotalCompras,
+       COUNT(v.ID) as NumeroTransacciones
+FROM Clientes c
+INNER JOIN Ventas v ON c.ID = v.ID_Cliente
+       AND v.Fecha >= '2023-01-01' 
+       AND v.Fecha < '2024-01-01'
+GROUP BY c.Nombre, c.Apellido
+ORDER BY TotalCompras DESC;
+
+-- Índices necesarios para la consulta optimizada
+CREATE NONCLUSTERED INDEX IX_Ventas_Cliente_Fecha 
+ON Ventas(ID_Cliente, Fecha) INCLUDE(Monto);
+
+-- Optimización de búsqueda de inventario
+CREATE NONCLUSTERED INDEX IX_Productos_Stock 
+ON Productos(Categoria, Stock) INCLUDE(Nombre, Precio, UltimaActualizacion);
+
+-- Consulta optimizada para búsqueda de productos con stock bajo
+SELECT Nombre, Stock, Precio, UltimaActualizacion 
+FROM Productos 
+WHERE Categoria = 'Electrónicos' 
+       AND Stock < 10 
+ORDER BY Stock ASC;
+
+-- Identificar consultas más costosas
+SELECT TOP 10 
+    qs.total_elapsed_time / qs.execution_count AS avg_elapsed_time,
+    SUBSTRING(qt.text, (qs.statement_start_offset/2) + 1,
+        ((CASE qs.statement_end_offset
+          WHEN -1 THEN DATALENGTH(qt.text)
+         ELSE qs.statement_end_offset END 
+            - qs.statement_start_offset)/2) + 1) AS query_text,
+    qs.execution_count
+FROM sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) as qt
+ORDER BY avg_elapsed_time DESC;
+
+-- Índices faltantes recomendados por SQL Server
+SELECT 
+    DB_NAME(mid.database_id) AS DatabaseName,
+    OBJECT_NAME(mid.[object_id]) AS TableName,
+    mid.equality_columns, 
+    mid.inequality_columns,
+    mid.included_columns,
+    migs.avg_total_user_cost * migs.avg_user_impact * (migs.user_seeks + migs.user_scans) AS improvement_measure 
+FROM sys.dm_db_missing_index_group_stats AS migs 
+INNER JOIN sys.dm_db_missing_index_groups AS mig
+     ON migs.group_handle = mig.index_group_handle 
+INNER JOIN sys.dm_db_missing_index_details AS mid
+     ON mig.index_handle = mid.index_handle 
+ORDER BY improvement_measure DESC;
+
+-- ============================================================
+-- EJEMPLOS ADICIONALES DE OPTIMIZACIÓN
+-- ============================================================
+
+-- Índice filtrado para clientes premium (ejemplo)
+ALTER TABLE Clientes ADD EsPremium BIT DEFAULT 0;
+GO
+
+-- Actualizar algunos clientes como premium
+UPDATE Clientes SET EsPremium = 1 WHERE ID IN (1, 3, 5, 7, 9);
+GO
+
+-- Crear índice filtrado
+CREATE NONCLUSTERED INDEX IX_Clientes_Premium
+ON Clientes(ID, Nombre, Apellido)
+WHERE EsPremium = 1;
+GO
+
+-- Consulta que se beneficia del índice filtrado
+SELECT ID, Nombre, Apellido, Email
+FROM Clientes
+WHERE EsPremium = 1;
+
+-- Índice con columnas calculadas
+-- Primero crear la columna calculada
+ALTER TABLE Ventas ADD AñoMes AS CONVERT(VARCHAR(7), Fecha, 120);
+GO
+
+-- Crear índice en la columna calculada
+CREATE NONCLUSTERED INDEX IX_Ventas_AñoMes
+ON Ventas(AñoMes);
+GO
+
+-- Consulta que usa la columna calculada
+SELECT AñoMes, COUNT(*) as NumVentas, SUM(Monto) as TotalVentas
+FROM Ventas
+GROUP BY AñoMes
+ORDER BY AñoMes;
+
+-- Optimización de consultas con JOIN
+-- Crear índice para optimizar JOINs frecuentes
+CREATE NONCLUSTERED INDEX IX_Empleados_Departamento
+ON Empleados(ID_Departamento);
+GO
+
+-- Consulta JOIN optimizada
+SELECT e.Nombre, e.Apellido, d.Nombre as Departamento
+FROM Empleados e
+JOIN Departamentos d ON e.ID_Departamento = d.ID
+WHERE d.Nombre = 'IT';
+
+-- Optimización de consultas de agrupación
+CREATE NONCLUSTERED INDEX IX_Ventas_Producto_Fecha
+ON Ventas(ID_Producto, Fecha) INCLUDE(Cantidad, Monto);
+GO
+
+-- Consulta de ventas por producto y mes
+SELECT 
+    p.Nombre as Producto,
+    CONVERT(VARCHAR(7), v.Fecha, 120) as Mes,
+    SUM(v.Cantidad) as UnidadesVendidas,
+    SUM(v.Monto) as VentaTotal
+FROM Ventas v
+JOIN Productos p ON v.ID_Producto = p.ID
+WHERE v.Fecha >= '2023-01-01' AND v.Fecha < '2024-01-01'
+GROUP BY p.Nombre, CONVERT(VARCHAR(7), v.Fecha, 120)
+ORDER BY p.Nombre, Mes;
+
+-- ============================================================
+-- SCRIPT DE VERIFICACIÓN DE SALUD DE LA BASE DE DATOS
+-- ============================================================
+
+-- Verificar fragmentación de índices
+SELECT 
+    OBJECT_NAME(i.OBJECT_ID) AS TableName,
+    i.name AS IndexName,
+    ips.avg_fragmentation_in_percent
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, NULL) ips
+JOIN sys.indexes i ON ips.object_id = i.object_id AND ips.index_id = i.index_id
+WHERE ips.avg_fragmentation_in_percent > 10
+ORDER BY ips.avg_fragmentation_in_percent DESC;
+
+-- Verificar uso de índices
+SELECT 
+    OBJECT_NAME(i.OBJECT_ID) AS TableName,
+    i.name AS IndexName,
+    us.user_seeks,
+    us.user_scans,
+    us.user_lookups,
+    us.user_updates
+FROM sys.dm_db_index_usage_stats us
+JOIN sys.indexes i ON us.object_id = i.object_id AND us.index_id = i.index_id
+WHERE database_id = DB_ID()
+ORDER BY (us.user_seeks + us.user_scans + us.user_lookups) DESC;
+
+-- Índices no utilizados (candidatos para eliminación)
+SELECT 
+    OBJECT_NAME(i.OBJECT_ID) AS TableName,
+    i.name AS IndexName,
+    i.type_desc
+FROM sys.indexes i
+LEFT JOIN sys.dm_db_index_usage_stats us ON 
+    i.object_id = us.object_id AND 
+    i.index_id = us.index_id AND
+    us.database_id = DB_ID()
+WHERE 
+    i.type_desc <> 'HEAP' AND
+    OBJECTPROPERTY(i.object_id, 'IsUserTable') = 1 AND
+    (us.user_seeks + us.user_scans + us.user_lookups) IS NULL;
+
+-- Resumen de la salud de la base de datos
+SELECT 
+    'Tablas' as Tipo,
+    COUNT(*) as Cantidad
+FROM sys.tables
+WHERE type = 'U'
+UNION
+SELECT 
+    'Índices',
+    COUNT(*)
+FROM sys.indexes
+WHERE index_id > 0
+UNION
+SELECT 
+    'Índices fragmentados (>30%)',
+    COUNT(*)
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, NULL)
+WHERE avg_fragmentation_in_percent > 30;
+
+-- Información para el artículo de blog
+PRINT 'Base de datos de ejemplo para "Optimización de consultas SQL: La guía definitiva"';
+PRINT '========================================================================';
+PRINT 'Esta base de datos incluye ejemplos prácticos de:';
+PRINT ' - Creación y uso de índices clustered y non-clustered';
+PRINT ' - Índices compuestos y filtrados';
+PRINT ' - Optimización de consultas JOIN y GROUP BY';
+PRINT ' - Análisis de planes de ejecución';
+PRINT ' - Monitoreo de rendimiento de consultas';
+PRINT ' - Estadísticas y mantenimiento de índices';
+PRINT '';
+PRINT 'Para profundizar en los temas tratados en este artículo, te recomendamos';
+PRINT 'consultar la documentación oficial de Microsoft SQL Server.';
+PRINT '';
+PRINT 'Simplemente ejecuta este script en SQL Server Management Studio y podrás';
+PRINT 'experimentar con todas las técnicas de optimización mencionadas.';

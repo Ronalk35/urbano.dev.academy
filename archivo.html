@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="http://192.168.18.141:5500/img/logo.png" />
+    <meta property="og:url" content="http://192.168.18.141:5500/archivo.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+    <title>Centro de Recursos y Descargas - Urbano.Dev Academy</title>
+
+
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <script src="/assets/js/includes.js" defer></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        /* Estilos para los archivos */
+        .files-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .file-card {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #38bdf8;
+        }
+
+        .file-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin: 0;
+        }
+
+        .file-description {
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .file-preview {
+            background-color: #0f172a;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+        }
+
+        .file-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .btn-download {
+            background: #3b82f6;
+        }
+
+        .btn-download:hover {
+            background: #2563eb;
+        }
+
+        .btn-preview {
+            background: #10b981;
+        }
+
+        .btn-preview:hover {
+            background: #059669;
+        }
+
+        /* Modal para previsualizar */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .modal-title {
+            margin: 0;
+            color: #38bdf8;
+            font-size: 1.8rem;
+        }
+
+        .modal-close {
+            font-size: 1.8rem;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #f43f5e;
+        }
+
+        .modal-preview {
+            background-color: #0f172a;
+            border-radius: 4px;
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-pdf {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+
+        /* Estilos para secciones adicionales */
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, transparent);
+            margin: 2.5rem 0;
+            border-radius: 2px;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        .Container ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .Container li::before {
+            content: '';
+            color: #38bdf8;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .files-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .modal-content {
+                width: 90%;
+                margin: 10% auto;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .files-container {
+                grid-template-columns: 1fr;
+            }
+
+            .file-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                width: 95%;
+            }
+
+            .modal-preview {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+
+            .btn-back {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+                margin-left: 20px;
+            }
+
+            /* Ajustes para dispositivos móviles */
+            @media (max-width: 768px) {
+                .file-preview {
+
+                    font-size: 1.18rem;
+                    /* Disminuye el tamaño de fuente */
+
+                    overflow-y: auto;
+                    /* Asegura que el contenido siga siendo desplazable */
+                }
+            }
+        }
+    </style>
+</head>
+
+<body class="art_six">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <!-- Contenido principal -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="Title">Centro de Recursos y Descargas</h1>
+
+        <div class="article-meta">
+            <span><i class="far fa-calendar"></i> Actualizado: <span id="date-display">Marzo 16, 2025</span></span>
+            <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+        </div>
+
+        <div class="mb-8">
+            <p class="text-lg mb-4">
+                Bienvenido a nuestro centro de recursos. Aquí encontrarás documentación técnica, guías de referencia y
+                materiales educativos para complementar tu formación en desarrollo web y data engineering.
+            </p>
+        </div>
+
+        <section class="mb-8">
+            <h2>Documentos Técnicos</h2>
+            <br>
+            <p>
+                Nuestra colección de documentos técnicos está diseñada para proporcionar información detallada sobre
+                conceptos avanzados, metodologías y mejores prácticas en el campo del desarrollo y la ingeniería de
+                datos.
+            </p>
+
+            <div class="files-container">
+                <!-- Archivo TXT 1 -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📄</div>
+                        <h3 class="file-title">Guía de Principios Data Mesh</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Documento técnico que detalla los principios fundamentales de la arquitectura Data Mesh y su
+                            implementación práctica.</p>
+                    </div>
+                    <div class="file-preview">
+                        # Principios Data Mesh
+
+                        1. **Propiedad de Datos Descentralizada**
+                        - Responsabilidad por dominios
+                        - Autonomía en gestión
+
+                        2. **Datos como Producto**
+                        - Ciclo de vida propio
+                        - UX enfocada al consumidor
+                        ...</div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('datamesh-principios', 'txt')">Ver
+                            Completo</button>
+                        <a href="#" class="btn btn-download" download="datamesh-principios.txt">Descargar</a>
+                    </div>
+                </div>
+
+                <!-- Archivo TXT 2 -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📄</div>
+                        <h3 class="file-title">Modelo de Gobernanza Federada</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Descripción detallada del modelo de gobernanza federada de datos y su aplicación en
+                            arquitecturas
+                            distribuidas.</p>
+                    </div>
+                    <div class="file-preview">
+                        # Gobernanza Federada de Datos
+
+                        ## Fundamentos
+                        - Estándares compartidos entre dominios
+                        - Políticas comunes de seguridad
+                        - Interoperabilidad garantizada
+
+                        ## Implementación
+                        ...</div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('gobernanza-federada', 'txt')">Ver
+                            Completo</button>
+                        <a href="#" class="btn btn-download" download="gobernanza-federada.txt">Descargar</a>
+                    </div>
+                </div>
+
+                <!-- Archivo TXT 3 -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📄</div>
+                        <h3 class="file-title">Infraestructura Auto-servicio</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Guía técnica sobre la creación de infraestructuras auto-servicio para equipos de datos
+                            descentralizados.</p>
+                    </div>
+                    <div class="file-preview">
+                        # Infraestructura Auto-servicio para Equipos de Datos
+
+                        ## Componentes Esenciales
+                        - Plataformas de gestión de datos
+                        - Herramientas de transformación
+                        - APIs estandarizadas
+                        ...</div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('infraestructura-autoservicio', 'txt')">Ver
+                            Completo</button>
+                        <a href="#" class="btn btn-download" download="infraestructura-autoservicio.txt">Descargar</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section class="mb-8">
+            <h2>Recursos de Implementación</h2>
+            <br>
+            <p>
+                A continuación encontrarás guías prácticas y recursos detallados para implementar arquitecturas de datos
+                modernas en tu organización o puedas adquirir mayores conocimientos.
+            </p>
+
+            <div class="files-container">
+                <!-- Archivo TXT 4 -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📄</div>
+                        <h3 class="file-title">Patrones de Diseño para Data Mesh</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Documento con patrones de diseño recomendados para implementar una arquitectura Data Mesh
+                            exitosa.</p>
+                    </div>
+                    <div class="file-preview">
+                        # Patrones de Diseño para Data Mesh
+
+                        ## Patrones de Integración
+                        - Event-driven architecture
+                        - API-first approach
+                        - Contratos de datos
+
+                        ## Patrones de Escalabilidad
+                        ...</div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('patrones-datamesh', 'txt')">Ver
+                            Completo</button>
+                        <a href="#" class="btn btn-download" download="patrones-datamesh.txt">Descargar</a>
+                    </div>
+                </div>
+
+                <!-- Archivo TXT 5 -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📄</div>
+                        <h3 class="file-title">Buenas Prácticas de Calidad de Datos</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Guía con buenas prácticas para asegurar la calidad de datos en arquitecturas distribuidas.
+                        </p>
+                    </div>
+                    <div class="file-preview">
+                        # Buenas Prácticas de Calidad de Datos
+
+                        ## Principios Fundamentales
+                        - Datos completos y consistentes
+                        - Validación en origen
+                        - Pruebas automatizadas
+
+                        ## Técnicas de Implementación
+                        ...</div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('calidad-datos', 'txt')">Ver
+                            Completo</button>
+                        <a href="#" class="btn btn-download" download="calidad-datos.txt">Descargar</a>
+                    </div>
+                </div>
+
+                <!-- Archivo PDF -->
+                <div class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📑</div>
+                        <h3 class="file-title">Guía Completa de Data Mesh</h3>
+                    </div>
+                    <div class="file-description">
+                        <p>Manual completo que cubre todos los aspectos de la arquitectura Data Mesh, desde conceptos
+                            hasta implementación.</p>
+                    </div>
+                    <div class="file-preview"
+                        style="display: flex; justify-content: center; align-items: center; height: 200px;">
+                        <span style="font-size: 1.2rem;">Vista previa de PDF disponible</span>
+                    </div>
+                    <div class="file-actions">
+                        <button class="btn btn-preview" onclick="openPreview('guia-datamesh', 'pdf')">Ver PDF</button>
+                        <a href="/assets/document/Guía de Principios Data Mesh.pdf" class="btn btn-download"
+                            download="guia-datamesh.pdf">Descargar</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <section class="mb-8">
+            <h2>Cómo Utilizar estos Recursos</h2>
+            <br>
+            <p>
+                Estos documentos están diseñados para proporcionar una comprensión profunda de las arquitecturas
+                modernas de datos.
+                Para obtener el máximo beneficio, recomendamos:
+            </p>
+            <ul class="Container">
+                <li>Comenzar con la "Guía de Principios Data Mesh" para entender los conceptos fundamentales</li>
+                <li>Explorar los documentos específicos según sus necesidades de implementación</li>
+                <li>Utilizar la "Guía Completa de Data Mesh" como referencia para la implementación integral</li>
+                <li>Aplicar los patrones y buenas prácticas en sus propios proyectos</li>
+            </ul>
+        </section>
+
+        <div class="mt-8 border-t pt-4">
+            <a href="index.html" class="btn-back">Ir a Inicio</a>
+        </div>
+    </main>
+
+    <!-- Modal para previsualización -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title">Previsualización</h2>
+                <button class="modal-close" onclick="closePreview()">&times;</button>
+            </div>
+            <div id="modalPreviewText" class="modal-preview" style="display: none;"></div>
+            <iframe id="modalPreviewPdf" class="modal-pdf" style="display: none;"></iframe>
+            <div class="file-actions">
+                <button class="btn btn-download" id="modalDownload">Descargar</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-preview {
+
+            padding: 30px;
+
+            text-align: left;
+            /* Asegura que el texto esté alineado */
+            font-family: Arial, sans-serif;
+            /* Fuente legible */
+        }
+
+        /* Estilos específicos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .modal-preview {
+                padding: 35px;
+                /* Reduce el padding en pantallas pequeñas */
+                font-size: 14px;
+                /* Reduce el tamaño de fuente */
+                max-width: 100%;
+                /* Más ancho disponible en móviles */
+            }
+        }
+    </style>
+
+    <!-- Footer único -->
+    <div data-include="footer.html"></div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Espera a que todos los includes terminen de cargarse
+            setTimeout(function () {
+                var dateElement = document.getElementById('date-display');
+                if (!dateElement) return;
+
+                var months = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                ];
+
+                var now = new Date();
+                var day = now.getDate();
+                var month = months[now.getMonth()];
+                var year = now.getFullYear();
+
+                dateElement.innerHTML = month + " " + day + ", " + year;
+            }, 100);
+        });
+
+        // Contenido simulado para previsualizaciones
+        const previewContent = {
+            'datamesh-principios': `# Principios Data Mesh
+
+1. **Propiedad de Datos Descentralizada**
+   - Responsabilidad por dominios de negocio
+   - Autonomía en gestión de datos
+   - Eliminación de cuellos de botella centralizados
+   - Conocimiento del dominio incorporado en los datos
+
+2. **Datos como Producto**
+   - Ciclo de vida propio para cada conjunto de datos
+   - UX enfocada al consumidor de datos
+   - Metadatos descriptivos y completos
+   - Calidad garantizada y documentada
+   - Soporte y mantenimiento continuo
+   - Versiones controladas y documentadas
+
+3. **Infraestructura Auto-servicio**
+   - Plataformas que habilitan la autonomía
+   - Herramientas estandarizadas
+   - Automatización de procesos comunes
+   - Reducción de la carga operativa
+   - Democratización del acceso a tecnologías
+
+4. **Gobernanza Federada**
+   - Estándares compartidos entre dominios
+   - Políticas unificadas de seguridad
+   - Interoperabilidad garantizada
+   - Balance entre autonomía y coherencia
+   - Procesos de decisión descentralizados pero coordinados
+
+## Implementación Práctica
+
+Para implementar estos principios, se recomienda:
+
+1. Comenzar con un dominio piloto
+2. Establecer estándares mínimos viables
+3. Crear una plataforma de habilitación
+4. Desarrollar comunidades de práctica
+5. Implementar mecanismos de retroalimentación continua
+
+El cambio hacia Data Mesh no es solo tecnológico sino principalmente organizacional y cultural. Requiere un nuevo enfoque en la propiedad y responsabilidad de los datos.`,
+
+            'gobernanza-federada': `# Gobernanza Federada de Datos
+
+## Fundamentos
+- Estándares compartidos entre dominios
+- Políticas comunes de seguridad
+- Interoperabilidad garantizada
+- Lineamientos de calidad unificados
+- Taxonomías y ontologías compartidas
+
+## Implementación
+1. **Consejo de Gobernanza**
+   - Representantes de cada dominio
+   - Autoridad para establecer estándares
+   - Resolución de conflictos entre dominios
+   - Alineación con objetivos empresariales
+
+2. **Políticas Globales**
+   - Seguridad y privacidad
+   - Clasificación de datos
+   - Retención y archivo
+   - Acceso y autorización
+
+3. **Estándares Técnicos**
+   - Formatos de intercambio
+   - Protocolos de API
+   - Estructura de metadatos
+   - Encriptación y protección
+
+4. **Métricas de Calidad**
+   - Indicadores comunes
+   - Umbrales mínimos aceptables
+   - Procesos de validación
+   - Auditorías periódicas
+
+## Equilibrio entre Centralización y Autonomía
+
+El modelo de gobernanza federada busca un equilibrio entre:
+- Estándares unificados que garanticen interoperabilidad
+- Autonomía de los dominios para optimizar sus procesos
+- Coherencia global en la gestión de datos
+- Flexibilidad para adaptarse a necesidades específicas
+
+Este equilibrio se logra mediante:
+1. Principios claros pero flexibles
+2. Mecanismos de excepción documentados
+3. Procesos de revisión y adaptación continua
+4. Comunidades de práctica entre dominios`,
+
+            'infraestructura-autoservicio': `# Infraestructura Auto-servicio para Equipos de Datos
+
+## Componentes Esenciales
+- Plataformas de gestión de datos
+- Herramientas de transformación
+- APIs estandarizadas
+- Servicios de descubrimiento
+- Catalogación automatizada
+- Monitoreo y observabilidad
+
+## Principios de Diseño
+
+1. **Abstracción de Complejidad**
+   - Ocultar detalles técnicos innecesarios
+   - Interfaces intuitivas y documentadas
+   - Plantillas y aceleradores pre-configurados
+   - Automatización de tareas repetitivas
+
+2. **Estandarización con Flexibilidad**
+   - Componentes modulares reutilizables
+   - Extensibilidad para casos específicos
+   - Balanceo entre conformidad y adaptabilidad
+   - Interfaces comunes para tecnologías diversas
+
+3. **Ciclo de Feedback Continuo**
+   - Métricas de uso y rendimiento
+   - Captura de necesidades emergentes
+   - Mejora iterativa basada en datos reales
+   - Comunidades de usuarios activas
+
+## Implementación Técnica
+
+### Plataforma de Datos
+- Orquestación de pipelines
+- Gobierno de datos embebido
+- Observabilidad integrada
+- Gestión de identidades y accesos
+- Catálogo de datos unificado
+
+### Herramientas para Equipos
+- Interfaces de desarrollo (IDEs)
+- Ambientes de prueba automatizados
+- Gestión de versiones y cambios
+- Herramientas colaborativas
+
+### Seguridad y Cumplimiento
+- Seguridad por diseño
+- Auditoría automática
+- Gestión de consentimientos
+- Lineamientos incorporados en el código`,
+
+            'patrones-datamesh': `# Patrones de Diseño para Data Mesh
+
+## Patrones de Integración
+- Event-driven architecture
+- API-first approach
+- Contratos de datos
+- Sincronización con CDC (Change Data Capture)
+- Federación de consultas
+
+## Patrones de Escalabilidad
+- Particionamiento por dominio
+- Diseño orientado a eventos
+- Caching distribuido
+- Procesamiento asíncrono
+- Tolerancia a fallos
+
+## Patrones de Descubrimiento
+- Catálogos de datos automatizados
+- Metadatos enriquecidos
+- Gráficos de conocimiento
+- Linaje de datos end-to-end
+- Perfiles de datos automatizados
+
+## Patrones de Seguridad
+- Seguridad a nivel de dato
+- Tokenización y enmascaramiento
+- Gestión de identidades distribuidas
+- Auditoría centralizada
+- Análisis de riesgos de datos
+
+## Patrones de Calidad
+- Validación en origen
+- Monitores de calidad
+- Contratos de calidad entre dominios
+- Reconciliación automática
+- Pruebas continuas de datos
+
+## Patrones de Implementación
+
+### Empezar Pequeño
+- Seleccionar un dominio piloto con alto valor
+- Implementar un producto de datos completo
+- Extraer lecciones y estándares
+- Expandir gradualmente a otros dominios
+
+### Evolución Continua
+- Versionar productos de datos
+- Migración gradual de sistemas legacy
+- Coexistencia con arquitecturas existentes
+- Adaptación incremental de procesos organizacionales`,
+
+            'calidad-datos': `# Buenas Prácticas de Calidad de Datos
+
+## Principios Fundamentales
+- Datos completos y consistentes
+- Validación en origen
+- Pruebas automatizadas
+- Documentación exhaustiva
+- Procesos de corrección definidos
+
+## Técnicas de Implementación
+
+### Validación en Origen
+- Implementar validaciones de esquema
+- Definir reglas de negocio explícitas
+- Automatizar verificaciones de integridad
+- Establecer mecanismos de rechazo y corrección
+- Documentar restricciones y expectativas
+
+### Monitoreo Continuo
+- Perfiles de datos automatizados
+- Alertas para anomalías y desviaciones
+- Dashboards de calidad por dominio
+- Métricas comparativas entre dominios
+- Tendencias históricas de calidad
+
+### Pruebas de Datos
+- Unit testing para transformaciones
+- Integration testing para flujos completos
+- Pruebas de regresión automatizadas
+- Golden datasets para comparaciones
+- Simulación de escenarios de error
+
+### Gobernanza de Calidad
+- Definición de SLAs de calidad
+- Revisiones periódicas por dominio
+- Procesos de escalamiento definidos
+- Certificación de fuentes de datos
+- Auditorías programadas
+
+## Casos de Uso Específicos
+
+### Datos Maestros
+- Reglas de unicidad y deduplicación
+- Validación cruzada entre sistemas
+- Procesos de reconciliación
+- Gestión de identidades unificada
+
+### Datos Transaccionales
+- Validación de secuencias e integridad
+- Detección de transacciones incompletas
+- Verificación de totales y balances
+- Manejo de excepciones y reintentos
+
+### Datos Analíticos
+- Consistencia entre agregaciones
+- Validación de tendencias y patrones
+- Detección de outliers y anomalías
+- Verificación de completitud histórica`
+        };
+
+        // Función mejorada para detectar dispositivos móviles
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Funciones para manejo de modales
+        function openPreview(fileId, fileType) {
+            const modal = document.getElementById('previewModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalPreviewText = document.getElementById('modalPreviewText');
+            const modalPreviewPdf = document.getElementById('modalPreviewPdf');
+            const modalActions = document.querySelector('.modal-content .file-actions');
+
+            // Actualizar título según el archivo
+            const fileTitles = {
+                'datamesh-principios': 'Guía de Principios Data Mesh',
+                'gobernanza-federada': 'Modelo de Gobernanza Federada',
+                'infraestructura-autoservicio': 'Infraestructura Auto-servicio',
+                'patrones-datamesh': 'Patrones de Diseño para Data Mesh',
+                'calidad-datos': 'Buenas Prácticas de Calidad de Datos',
+                'guia-datamesh': 'Guía Completa de Data Mesh'
+            };
+
+            modalTitle.textContent = fileTitles[fileId] || 'Previsualización';
+
+            // Limpiar el contenedor de acciones para evitar duplicados
+            modalActions.innerHTML = '';
+
+            // Ruta del archivo PDF correctamente codificada
+            const pdfPath = '/assets/document/Guía de Principios Data Mesh.pdf';
+            const encodedPdfPath = encodeURI(pdfPath);
+
+            // Crear el botón de descarga apropiado según el tipo de archivo
+            if (fileType === 'pdf') {
+                // Para PDF, crear un enlace que apunte al archivo
+                const downloadLink = document.createElement('a');
+                downloadLink.className = 'btn btn-download';
+                downloadLink.href = encodedPdfPath;
+                downloadLink.download = `${fileId}.pdf`;
+                downloadLink.textContent = 'Descargar PDF';
+                modalActions.appendChild(downloadLink);
+
+                // Agregar un botón de visualización directa para móviles
+                if (isMobileDevice()) {
+                    const viewDirectLink = document.createElement('a');
+                    viewDirectLink.className = 'btn btn-preview';
+                    viewDirectLink.href = encodedPdfPath;
+                    viewDirectLink.target = '_blank';
+                    viewDirectLink.textContent = 'Abrir PDF';
+                    viewDirectLink.style.marginLeft = '1px';
+                    modalActions.appendChild(viewDirectLink);
+                }
+            } else {
+                // Para archivos TXT, crear un botón que genere la descarga
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'btn btn-download';
+                downloadButton.textContent = `Descargar ${fileType.toUpperCase()}`;
+                downloadButton.onclick = function () {
+                    const textContent = previewContent[fileId] || '';
+                    const blob = new Blob([textContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+
+                    const tempLink = document.createElement('a');
+                    tempLink.href = url;
+                    tempLink.download = `${fileId}.${fileType}`;
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+
+                    setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                };
+                modalActions.appendChild(downloadButton);
+            }
+
+            // Mostrar el tipo de previsualización adecuado
+            if (fileType === 'pdf') {
+                // Manejar la visualización de PDF según el tipo de dispositivo
+                if (isMobileDevice()) {
+                    // En dispositivos móviles, mostrar un mensaje con opción de visualización directa
+                    modalPreviewText.style.display = 'block';
+                    modalPreviewPdf.style.display = 'none';
+                    modalPreviewText.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <p>La previsualización de PDF puede no funcionar correctamente en algunos dispositivos móviles.</p>
+                    <p>Use el botón "Abrir PDF" para visualizar el documento directamente en su navegador.</p>
+                </div>
+            `;
+                } else {
+                    // En escritorio, usar el iframe para visualizar el PDF
+                    modalPreviewText.style.display = 'none';
+                    modalPreviewPdf.style.display = 'block';
+                    modalPreviewPdf.src = encodedPdfPath;
+                }
+            } else {
+                modalPreviewText.style.display = 'block';
+                modalPreviewPdf.style.display = 'none';
+
+                // Mostrar el contenido como texto plano o con formato
+                try {
+                    // Intentar usar marked si está disponible
+                    if (typeof marked !== 'undefined') {
+                        modalPreviewText.innerHTML = previewContent[fileId] ?
+                            marked.parse(previewContent[fileId]) :
+                            'Contenido no disponible';
+                    } else {
+                        // Si marked no está disponible, usar texto plano con saltos de línea
+                        modalPreviewText.innerHTML = previewContent[fileId] ?
+                            previewContent[fileId].replace(/\n/g, '<br>') :
+                            'Contenido no disponible';
+                    }
+                } catch (e) {
+                    // En caso de error, mostrar como texto plano
+                    modalPreviewText.textContent = previewContent[fileId] || 'Contenido no disponible';
+                }
+            }
+
+            // Mostrar el modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            const modal = document.getElementById('previewModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+
+            // Limpiar la previsualización al cerrar para liberar recursos
+            document.getElementById('modalPreviewPdf').src = '';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+</body>
+
+</html>

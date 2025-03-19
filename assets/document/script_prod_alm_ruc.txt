@@ -1,0 +1,252 @@
+-- Ronald Urbano Chávez
+-- Creación de la Base de Datos
+CREATE DATABASE DBProcedimientosAlmacenados;
+GO
+
+USE DBProcedimientosAlmacenados;
+GO
+
+-- Creación de Tablas
+CREATE TABLE Regiones (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre_region VARCHAR(50) NOT NULL,
+    pais VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Cuentas (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    numero_cuenta VARCHAR(20) UNIQUE NOT NULL,
+    titular VARCHAR(100) NOT NULL,
+    tipo_cuenta VARCHAR(20) NOT NULL,
+    saldo DECIMAL(15,2) NOT NULL,
+    fecha_apertura DATE NOT NULL
+);
+
+CREATE TABLE Productos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Ventas (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    fecha DATE NOT NULL,
+    id_region INT,
+    monto DECIMAL(15,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_region) REFERENCES Regiones(id)
+);
+
+-- Inserción de Datos de Prueba
+INSERT INTO Regiones (nombre_region, pais) VALUES
+('Norte', 'España'),
+('Sur', 'España'),
+('Este', 'España'),
+('Oeste', 'España'),
+('Centro', 'España');
+
+INSERT INTO Cuentas (numero_cuenta, titular, tipo_cuenta, saldo, fecha_apertura) VALUES
+('1001-001', 'Juan Pérez', 'Ahorro', 5000.00, '2023-01-15'),
+('1001-002', 'María García', 'Corriente', 8500.00, '2023-02-20'),
+('1001-003', 'Carlos López', 'Ahorro', 3200.00, '2023-03-10'),
+('1001-004', 'Ana Martínez', 'Corriente', 12000.00, '2023-04-05'),
+('1001-005', 'Pedro Sánchez', 'Ahorro', 6500.00, '2023-05-12');
+
+INSERT INTO Productos (nombre, precio, stock, categoria) VALUES
+('Laptop', 999.99, 50, 'Electrónica'),
+('Smartphone', 599.99, 100, 'Electrónica'),
+('Tablet', 299.99, 75, 'Electrónica'),
+('Monitor', 199.99, 60, 'Electrónica'),
+('Teclado', 49.99, 120, 'Accesorios');
+
+INSERT INTO Ventas (fecha, id_region, monto, estado) VALUES
+('2024-01-15', 1, 1500.00, 'Completada'),
+('2024-01-16', 2, 2300.00, 'Completada'),
+('2024-01-17', 3, 1800.00, 'Completada'),
+('2024-01-18', 4, 2100.00, 'Completada'),
+('2024-01-19', 5, 1900.00, 'Completada');
+
+-- Procedimiento con Parámetros de Entrada y Salida
+CREATE PROCEDURE gestionar_producto
+    @operacion CHAR(1),
+    @id_producto INT = NULL,
+    @nombre VARCHAR(100) = NULL,
+    @precio DECIMAL(10,2) = NULL,
+    @resultado INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @resultado = 0;
+
+    BEGIN TRY
+        CASE @operacion
+            WHEN 'C' THEN
+                INSERT INTO Productos (nombre, precio, stock, categoria)
+                VALUES (@nombre, @precio, 0, 'Nueva');
+                SET @resultado = SCOPE_IDENTITY();
+                
+            WHEN 'R' THEN
+                SELECT * FROM Productos WHERE id = @id_producto;
+                SET @resultado = 1;
+                
+            WHEN 'U' THEN
+                UPDATE Productos
+                SET nombre = @nombre,
+                    precio = @precio
+                WHERE id = @id_producto;
+                SET @resultado = 1;
+                
+            WHEN 'D' THEN
+                DELETE FROM Productos WHERE id = @id_producto;
+                SET @resultado = 1;
+        END;
+    END TRY
+    BEGIN CATCH
+        SET @resultado = -1;
+        THROW;
+    END CATCH;
+END;
+GO
+
+-- Procedimiento con Manejo de Transacciones
+CREATE PROCEDURE transferir_fondos
+    @cuenta_origen INT,
+    @cuenta_destino INT,
+    @monto DECIMAL(15,2)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+            
+        -- Verificar fondos suficientes
+        IF EXISTS (
+            SELECT 1 FROM Cuentas 
+            WHERE id = @cuenta_origen 
+            AND saldo >= @monto
+        )
+        BEGIN
+            -- Debitar de cuenta origen
+            UPDATE Cuentas
+            SET saldo = saldo - @monto
+            WHERE id = @cuenta_origen;
+            
+            -- Acreditar a cuenta destino
+            UPDATE Cuentas
+            SET saldo = saldo + @monto
+            WHERE id = @cuenta_destino;
+            
+            COMMIT TRANSACTION;
+        END
+        ELSE
+        BEGIN
+            ROLLBACK TRANSACTION;
+            THROW 50001, 'Fondos insuficientes', 1;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
+-- Procedimiento Anidado Principal
+CREATE PROCEDURE procesar_venta_regional
+    @id_region INT,
+    @monto DECIMAL(15,2)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @total_ventas DECIMAL(15,2);
+    
+    -- Llamada a procedimiento anidado
+    EXEC calcular_total_ventas_region 
+        @id_region = @id_region,
+        @total = @total_ventas OUTPUT;
+        
+    -- Insertar nueva venta
+    INSERT INTO Ventas (fecha, id_region, monto, estado)
+    VALUES (GETDATE(), @id_region, @monto, 'Pendiente');
+    
+    -- Llamada a otro procedimiento anidado
+    EXEC actualizar_estadisticas_region @id_region;
+END;
+GO
+
+-- Procedimiento Anidado Secundario
+CREATE PROCEDURE calcular_total_ventas_region
+    @id_region INT,
+    @total DECIMAL(15,2) OUTPUT
+AS
+BEGIN
+    SELECT @total = SUM(monto)
+    FROM Ventas
+    WHERE id_region = @id_region;
+END;
+GO
+
+-- Procedimiento Anidado Terciario
+CREATE PROCEDURE actualizar_estadisticas_region
+    @id_region INT
+AS
+BEGIN
+    UPDATE Regiones
+    SET nombre_region = nombre_region
+    WHERE id = @id_region;
+END;
+GO
+
+-- Procedimiento con Operaciones de Conjunto
+CREATE PROCEDURE analizar_ventas_por_region
+    @año INT,
+    @mes INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    WITH ventas_regionales AS (
+        SELECT 
+            r.nombre_region,
+            COUNT(v.id) as total_ventas,
+            SUM(v.monto) as monto_total
+        FROM Ventas v
+        JOIN Regiones r ON v.id_region = r.id
+        WHERE YEAR(v.fecha) = @año
+        AND MONTH(v.fecha) = @mes
+        GROUP BY r.nombre_region
+    )
+    SELECT 
+        nombre_region,
+        total_ventas,
+        monto_total,
+        monto_total / SUM(monto_total) OVER () * 100 as porcentaje_total
+    FROM ventas_regionales
+    ORDER BY monto_total DESC;
+END;
+GO
+
+-- Ejemplos de uso:
+
+-- 1. Gestionar producto
+DECLARE @resultado INT;
+EXEC gestionar_producto 
+    @operacion = 'C',
+    @nombre = 'Nuevo Producto',
+    @precio = 299.99,
+    @resultado = @resultado OUTPUT;
+PRINT 'Resultado: ' + CAST(@resultado AS VARCHAR);
+
+-- 2. Transferir fondos
+EXEC transferir_fondos @cuenta_origen = 1, @cuenta_destino = 2, @monto = 1000.00;
+
+-- 3. Procesar venta regional
+EXEC procesar_venta_regional @id_region = 1, @monto = 2500.00;
+
+-- 4. Analizar ventas
+EXEC analizar_ventas_por_region @año = 2024, @mes = 1;

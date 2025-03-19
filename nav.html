@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- PWA meta tags - coloca estos antes de cualquier otra cosa -->
+	<meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: dark)">
+    
+    
+    <!-- iOS specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Ronald U.">
+    
+    <!-- Chrome for Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description" content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords" content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+  
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description" content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="http://192.168.18.141:5500/img/logo.png" />
+    <meta property="og:url" content="http://192.168.18.141:5500/index.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+
+  <title>Urbano.Dev Academy - Blog de Desarrollo y Data Engineering</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+
+  <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+  <header class="Header">
+    <div class="Header__logo-container">
+      <a href="index.html" class="Header__logo">U</a>
+      <div class="Header__welcome">
+        <div class="Header__welcome-text">Bienvenidos 📚</div>
+        <div class="Header__welcome-date" id="date-display"></div>
+        <script src="/assets/js/date.js"></script>
+      </div>
+    </div>
+    <div class="Header__burger">
+      <div class="Header__burger--bar"></div>
+    </div>
+    <nav class="Header__navigation">
+      <ul class="Menu">
+        <li class="Menu__item">
+          <a href="index.html" class="Menu__link">Inicio</a>
+        </li>
+        <li class="Menu__item">
+          <a href="#" class="Menu__link Menu__link--active">Blog</a>
+        </li>
+        <li class="Menu__item">
+          <a href="https://ronalk35.github.io/" target="_blank" class="Menu__link">Portafolio</a>
+        </li>
+        <li class="Menu__item">
+          <a href="archivo.html" class="Menu__link">Archivos</a>
+        </li>
+        <li class="Menu__item">
+          <a href="index.html" class="Menu__link">Mentorias</a>
+        </li>
+        <li class="Menu__item">
+          <a href="dino_game.html" class="Menu__link">Game</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="Section Section--no--bottom">
+      <div class="Container">
+        <div class="Title-container">
+          <h1 class="Title">Urbano.Dev Academy</h1>
+          <p class="Title-description">Tu centro de conocimiento en Desarrollo de Software y Data Engineering</p>
+        </div>
+        <div class="Section__separator"></div>
+      </div>
+    </section>
+
+    <section class="Section Section--no--top Section--no--bottom">
+      <div class="Container">
+        <div class="Blog-presentation">
+          <div class="Blog-presentation__logo">
+            <img src="/assets/img/logo.png" alt="UrbanoDev Academy Logo" />
+          </div>
+          <div class="Blog-presentation__content">
+            <p class="Blog-presentation__text">
+              Bienvenido a tu centro de conocimiento especializado en Desarrollo
+              de Software, Bases de Datos y Data Engineering. Ofrecemos contenido
+              técnico de alta calidad, tutoriales prácticos y análisis profundos
+              de las últimas tecnologías. Nuestra misión es proporcionar recursos
+              valiosos tanto para desarrolladores principiantes como
+              experimentados, con un enfoque especial en desarrollo web, SQL Server y
+              arquitecturas de datos modernas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+  <script>
+     // JavaScript para el menú móvil
+ document.addEventListener('DOMContentLoaded', function() {
+    const burger = document.querySelector('.Header__burger');
+    const nav = document.querySelector('.Header__navigation');
+    const menuItems = document.querySelectorAll('.Menu__link');
+    
+    // Función para alternar el menú
+    function toggleMenu() {
+      burger.classList.toggle('active');
+      nav.classList.toggle('active');
+      
+      // Bloquear/desbloquear scroll cuando el menú está abierto
+      if (nav.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+    
+    // Evento para el botón hamburguesa
+    burger.addEventListener('click', toggleMenu);
+    
+    // Cerrar menú al hacer clic en un elemento del menú
+    menuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        if (nav.classList.contains('active')) {
+          toggleMenu();
+        }
+      });
+    });
+    
+    // Cerrar menú al hacer clic fuera del menú
+    document.addEventListener('click', function(event) {
+      const isClickInsideNav = nav.contains(event.target);
+      const isClickOnBurger = burger.contains(event.target);
+      
+      if (nav.classList.contains('active') && !isClickInsideNav && !isClickOnBurger) {
+        toggleMenu();
+      }
+    });
+    
+    // Ajustar en cambio de orientación o redimensión
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 768 && nav.classList.contains('active')) {
+        burger.classList.remove('active');
+        nav.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+  </script>
+  
+</body>
+
+
+
+
+
+
+
+        

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas. Tutoriales, guías y mejores prácticas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="https://tudominio.com/assets/img/logo.png" />
+    <meta property="og:url" content="https://tudominio.com/blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+    <title>Procedimientos Almacenados en SQL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <script src="/assets/js/includes.js" defer></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .Section {
+            padding: 2rem 0;
+        }
+        section.mb-8 a {
+            color: #38bdf8; /* Cambia el color de los enlaces aquí */
+            text-decoration: none;
+        }
+        section.mb-8 a:hover {
+            color: #059669; /* Cambia el color de los enlaces cuando el ratón pasa sobre ellos */
+        }
+
+        .Container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        .Container ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .Container li::before {
+            content: '';
+            color: #38bdf8;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        .sql-block {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sql-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .keyword {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .number {
+            color: #fda4af;
+        }
+
+        .function {
+            color: #c4b5fd;
+        }
+
+        button {
+            background: #0ea5e9;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            right: 0.8rem;
+            top: 0.8rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        button:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #10b981;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-download::before {
+            content: "↓";
+            font-weight: bold;
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .Container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .sql-block {
+                padding: 1rem;
+                margin: 1.2rem 0;
+            }
+
+            .sql-code {
+                font-size: 0.85rem;
+            }
+
+            button {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .sql-code {
+                font-size: 0.8rem;
+            }
+
+            .btn-back {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+            .btn-download {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="art_four">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <!-- Contenido principal del artículo -->
+    <main class="Container mx-auto px-4 py-8 article-content">
+        <h1 class="Title">Procedimientos Almacenados en SQL</h1>
+        <div class="article-meta">
+            <span><i class="far fa-calendar"></i> Actualizado: Marzo 2025</span>
+            <span><i class="far fa-clock"></i> Tiempo de lectura: 8 min</span>
+            <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+        </div>
+        
+        <h2 class="text-2xl font-semibold mb-4">Introducción</h2>
+        <div class="mb-8">
+            <p class="text-lg mb-4">
+                Los procedimientos almacenados son uno de los componentes más poderosos en el desarrollo de 
+                bases de datos modernas. En este artículo, exploraremos en profundidad todos los aspectos 
+                relacionados con su implementación, desde conceptos básicos hasta técnicas avanzadas de desarrollo.
+            </p>
+        </div>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">1. Definición y Tipos de Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">1.1 ¿Qué es un Procedimiento Almacenado?</h3>
+            <p>
+                Un procedimiento almacenado (stored procedure) es un conjunto de instrucciones SQL precompiladas 
+                que se almacenan y ejecutan como una unidad en el servidor de base de datos. Estos procedimientos pueden:
+            </p>
+            <ul class="list-disc pl-5">
+                <li>Aceptar parámetros</li>
+                <li>Devolver resultados</li>
+                <li>Manejar errores</li>
+                <li>Ejecutar operaciones transaccionales</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold mb-4">1.2 Tipos de Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">1.2.1 Por su Funcionalidad</h3>
+            <ul class="list-disc pl-5">
+                <li>Procedimientos de Sistema: Proporcionados por el DBMS</li>
+                <li>Procedimientos de Usuario: Creados por desarrolladores</li>
+                <li>Procedimientos Temporales: Existentes solo durante una sesión</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold mb-3">1.2.2 Por su Comportamiento</h3>
+            <ul class="list-disc pl-5">
+                <li>Procedimientos Deterministas: Siempre retornan el mismo resultado para los mismos parámetros</li>
+                <li>Procedimientos No Deterministas: Pueden retornar diferentes resultados para los mismos parámetros</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">2. Construcción de Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">2.1 Sintaxis Básica</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+-- Sintaxis 
+CREATE PROCEDURE nombre_procedimiento
+    (
+    -- Declaración de parámetros
+    @parametro1 tipo_dato,
+    @parametro2 tipo_dato
+    )
+AS
+BEGIN
+    -- Declaración de variables locales
+    DECLARE @variable1 tipo_dato;
+            
+    -- Lógica del procedimiento
+    SELECT @variable1 = columna
+    FROM tabla
+    WHERE condicion = @parametro1;
+            
+    -- Más instrucciones...
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h2 class="text-2xl font-semibold mb-4">2.2 Elementos Fundamentales</h2>
+            <h3 class="text-xl font-semibold mb-3">2.2.1 Encabezado</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+CREATE OR ALTER PROCEDURE nombre_procedimiento
+</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">2.2.2 Cuerpo</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+BEGIN
+    -- Declaraciones
+    -- Lógica de negocio
+    -- Control de errores
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">2.2.3 Control de Errores</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+BEGIN TRY
+    -- Código principal
+END TRY
+BEGIN CATCH
+    -- Manejo de errores
+    SELECT 
+        ERROR_NUMBER() AS ErrorNumber,
+        ERROR_MESSAGE() AS ErrorMessage;
+END CATCH;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">3. Manejo de Parámetros</h2>
+            <h3 class="text-xl font-semibold mb-3">3.1 Parámetros de Entrada</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE actualizar_empleado
+    (
+    @id_empleado INT,
+    @nuevo_salario DECIMAL(10,2)
+    )
+AS
+BEGIN
+    UPDATE empleados
+    SET salario = @nuevo_salario
+    WHERE id = @id_empleado;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">3.2 Parámetros de Salida</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE calcular_total_ventas
+    (
+    @fecha_inicio DATE,
+    @fecha_fin DATE,
+    @total_ventas DECIMAL(15,2) OUTPUT
+    )
+AS
+BEGIN
+    SELECT @total_ventas = SUM(monto)
+    FROM ventas
+    WHERE fecha BETWEEN @fecha_inicio AND @fecha_fin;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">3.3 Valores de Retorno</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE verificar_stock
+    @id_producto INT,
+    @cantidad_requerida INT
+AS
+BEGIN
+    DECLARE @stock_actual INT;
+            
+    SELECT @stock_actual = stock
+    FROM productos
+    WHERE id = @id_producto;
+            
+    IF @stock_actual >= @cantidad_requerida
+        RETURN 1;  -- Stock suficiente
+    ELSE
+        RETURN 0;  -- Stock insuficiente
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">4. Anidamiento de Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">4.1 Procedimientos Anidados</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE procesar_venta
+    @id_cliente INT,
+    @id_producto INT,
+    @cantidad INT
+AS
+BEGIN
+    DECLARE @stock_disponible BIT;
+    DECLARE @total_venta DECIMAL(10,2);
+            
+    -- Llamada a procedimiento anidado
+    EXEC @stock_disponible = verificar_stock 
+        @id_producto, 
+        @cantidad;
+            
+    IF @stock_disponible = 1
+    BEGIN
+        -- Llamada a otro procedimiento anidado
+        EXEC calcular_total_venta 
+            @id_producto, 
+            @cantidad, 
+            @total_venta OUTPUT;
+                    
+        -- Más lógica de negocio...
+    END;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">4.2 Niveles de Anidamiento</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Modelo
+CREATE PROCEDURE nivel1
+AS
+BEGIN
+    EXEC nivel2;
+END;
+            
+CREATE PROCEDURE nivel2
+AS
+BEGIN
+    EXEC nivel3;
+END;
+            
+CREATE PROCEDURE nivel3
+AS
+BEGIN
+    -- Lógica final
+    SELECT 'Nivel más profundo';
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">5. Operaciones con Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">5.1 Operaciones CRUD</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE gestionar_producto
+    @operacion CHAR(1),
+    @id_producto INT = NULL,
+    @nombre VARCHAR(100) = NULL,
+    @precio DECIMAL(10,2) = NULL
+AS
+BEGIN
+    CASE @operacion
+        WHEN 'C' THEN -- Create
+            INSERT INTO productos (nombre, precio)
+            VALUES (@nombre, @precio);
+            
+        WHEN 'R' THEN -- Read
+            SELECT * FROM productos
+            WHERE id = @id_producto;
+            
+        WHEN 'U' THEN -- Update
+            UPDATE productos
+            SET nombre = @nombre,
+                precio = @precio
+            WHERE id = @id_producto;
+            
+        WHEN 'D' THEN -- Delete
+            DELETE FROM productos
+            WHERE id = @id_producto;
+    END;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">5.2 Operaciones de Conjunto</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE analizar_ventas_por_region
+    @año INT,
+    @mes INT
+AS
+BEGIN
+    WITH ventas_regionales AS (
+        SELECT 
+            r.nombre_region,
+            COUNT(v.id) as total_ventas,
+            SUM(v.monto) as monto_total
+        FROM ventas v
+        JOIN regiones r ON v.id_region = r.id
+        WHERE YEAR(v.fecha) = @año
+        AND MONTH(v.fecha) = @mes
+        GROUP BY r.nombre_region
+    )
+    SELECT 
+        nombre_region,
+        total_ventas,
+        monto_total,
+        monto_total / SUM(monto_total) OVER () * 100 as porcentaje_total
+    FROM ventas_regionales
+    ORDER BY monto_total DESC;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">5.3 Manejo de Transacciones</h3>
+            <div class="sql-block">
+                <pre class="sql-code">-- Ejemplo
+
+CREATE PROCEDURE transferir_fondos
+    @cuenta_origen INT,
+    @cuenta_destino INT,
+    @monto DECIMAL(15,2)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION;
+                    
+        -- Verificar fondos suficientes
+        IF EXISTS (
+            SELECT 1 FROM cuentas 
+            WHERE id = @cuenta_origen 
+            AND saldo >= @monto
+        )
+        BEGIN
+            -- Debitar de cuenta origen
+            UPDATE cuentas
+            SET saldo = saldo - @monto
+            WHERE id = @cuenta_origen;
+                    
+            -- Acreditar a cuenta destino
+            UPDATE cuentas
+            SET saldo = saldo + @monto
+            WHERE id = @cuenta_destino;
+                    
+            COMMIT TRANSACTION;
+        END
+        ELSE
+        BEGIN
+            ROLLBACK TRANSACTION;
+            THROW 50001, 'Fondos insuficientes', 1;
+        END;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+                    
+        THROW;
+    END CATCH;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">6. Mejores Prácticas y Consideraciones</h2>
+            <h3 class="text-xl font-semibold mb-3">6.1 Optimización de Rendimiento</h3>
+            <ul class="list-disc pl-5">
+                <li>Utilizar índices apropiados</li>
+                <li>Evitar cursores cuando sea posible</li>
+                <li>Minimizar la complejidad de las consultas</li>
+                <li>Usar parámetros con tipos de datos correctos</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold mb-3">6.2 Seguridad</h3>
+            <ul class="list-disc pl-5">
+                <li>Implementar control de acceso</li>
+                <li>Validar parámetros de entrada</li>
+                <li>Prevenir inyección SQL</li>
+                <li>Manejar información sensible adecuadamente</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold mb-3">6.3 Mantenibilidad</h3>
+            <ul class="list-disc pl-5">
+                <li>Documentar el código</li>
+                <li>Usar nombres descriptivos</li>
+                <li>Mantener un estándar de codificación</li>
+                <li>Implementar control de versiones</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Conclusión</h2>
+            <div class="mb-8">
+                <p class="text-lg mb-4">
+                    Los procedimientos almacenados son herramientas fundamentales en el desarrollo de bases de datos que, 
+                    cuando se implementan correctamente, pueden mejorar significativamente el rendimiento, la seguridad y la 
+                    mantenibilidad de las aplicaciones. La clave está en comprender sus capacidades y limitaciones, seguir las 
+                    mejores prácticas y mantener un equilibrio entre la complejidad y la funcionalidad.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Recursos Adicionales</h2>
+            <p>
+                Para reforzar los conocimientos presentados en este artículo, te recomiendo visitar los siguientes recursos oficiales
+                donde encontrarás documentación completa y actualizada, que ofrece ejercicios interactivos y contenido técnico avanzado.
+                Adicionalmente, puedes encontrar la base de datos completa 'DBProcedimientosAlmacenados' en el script proporcionado. Dale al botón
+                Recursos; abre el archivo y simplemente cópialo, pégalo en SQL Server Management Studio y ejecútalo para crear la base
+                de datos con todos los ejemplos y procedimientos almacenados, 
+                permitiéndote practicar cada uno de los conceptos explicados en este artículo.
+            </p>
+            <ul class="list-disc pl-5">
+                <li>
+                    <a
+                        href="https://www.sqlservercentral.com/articles/stored-procedures-101"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    SQL Server Central - Stored Procedures
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/create-stored-procedures-transact-sql"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    Microsoft Learn - Procedimientos Almacenados
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="https://www.sqlshack.com/sql-server-stored-procedures-overview/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    SQLShack - Advanced Stored Procedures
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <div class="mt-4">
+            <a
+                href="./assets/document/script_prod_alm_ruc.txt"
+                download="script_prod_alm_ruc.txt"
+                class="btn-download"
+            >
+            Recursos
+            </a>
+        </div>
+
+        <div class="mt-8 border-t pt-4">
+            <a href="index.html" class="btn-back">Ir a Inicio</a>
+        </div>
+    </main>
+
+    <!-- Footer único -->
+    <div data-include="footer.html"></div>
+
+    
+    <script>
+        // Función para copiar el contenido de cada bloque SQL
+        function copyCode(button) {
+            const code = button.previousElementSibling.innerText;
+            
+            // Verificar si se está utilizando un dispositivo móvil y usar el portapapeles
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    button.innerText = 'Copiado';
+                    setTimeout(() => {
+                        button.innerText = 'Copiar';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error al copiar', err);
+                });
+            } else {
+                // Fallback para navegadores que no soportan Clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                button.innerText = 'Copiado';
+                setTimeout(() => {
+                    button.innerText = 'Copiar';
+                }, 2000);
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Espera a que todos los includes terminen de cargarse
+          setTimeout(function() {
+            var dateElement = document.getElementById('date-display');
+            if (!dateElement) return;
+            
+            var months = [
+              "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            
+            var now = new Date();
+            var day = now.getDate();
+            var month = months[now.getMonth()];
+            var year = now.getFullYear();
+            
+            dateElement.innerHTML = month + " " + day + ", " + year;
+          }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+        });
+      </script>
+</body>
+
+</html>

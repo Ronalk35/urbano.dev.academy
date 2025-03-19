@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas. Tutoriales, guías y mejores prácticas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="https://tudominio.com/assets/img/logo.png" />
+    <meta property="og:url" content="https://tudominio.com/blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+    <title>Arquitectura Data Mesh: El Futuro del Data Engineering</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://necolas.github.io/normalize.css/" />
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <script src="/assets/js/includes.js" defer></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        section.mb-8 ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+        section.mb-8 a {
+            color: #38bdf8; /* Cambia el color de los enlaces aquí */
+            text-decoration: none;
+        }
+        section.mb-8 a:hover {
+            color: #059669; /* Cambia el color de los enlaces cuando el ratón pasa sobre ellos */
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        li::before {
+            content: '';
+            color: #38bdf8;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, transparent);
+            margin: 2.5rem 0;
+            border-radius: 2px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="art_six">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <!-- Contenido principal del artículo -->
+    <main class="container mx-auto px-4 py-8 article-content">
+        <h1 class="Title">Arquitectura Data Mesh: El Futuro del Data Engineering</h1>
+        <div class="article-meta">
+            <span><i class="far fa-calendar"></i> Actualizado: Marzo 2025</span>
+            <span><i class="far fa-clock"></i> Tiempo de lectura: 8 min</span>
+            <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+        </div>
+
+
+        <div class="mb-8">
+            <p class="text-lg mb-4">
+                Análisis profundo sobre Data Mesh, el innovador paradigma que está
+                revolucionando la arquitectura de datos empresariales. Descubre cómo
+                esta aproximación descentralizada mejora la escalabilidad y la
+                gobernanza de datos en organizaciones grandes.
+            </p>
+        </div>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Introducción</h2>
+            <p class="mb-4">
+                La transformación digital ha llevado a las organizaciones a
+                enfrentarse a volúmenes de datos sin precedentes. Las arquitecturas
+                tradicionales centralizadas, como los data lakes y data warehouses,
+                están mostrando sus limitaciones en términos de escalabilidad y
+                agilidad. En este contexto, emerge Data Mesh como un paradigma
+                revolucionario que promete transformar la manera en que las
+                organizaciones gestionan y aprovechan sus datos.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">¿Qué es Data Mesh?</h2>
+            <p class="mb-4">
+                Data Mesh es una aproximación arquitectónica que propone tratar los
+                datos como un producto y descentralizar la responsabilidad de su
+                gestión. Este enfoque, introducido por Zhamak Dehghani, se fundamenta
+                en cuatro principios fundamentales:
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">1. Propiedad de Datos Descentralizada</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Los dominios de negocio son responsables de sus propios datos.</li>
+                        <li>Cada dominio tiene autonomía en la gestión de sus datos.</li>
+                        <li>Se elimina el cuello de botella del equipo central de datos.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">2. Datos como Producto</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Cada conjunto de datos se trata como un producto con su propio ciclo de vida.</li>
+                        <li>Se aplican prácticas de product management a los datos.</li>
+                        <li>Enfoque en la experiencia del usuario de datos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">3. Infraestructura Auto-servicio</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Plataformas que permiten la autonomía de los equipos.</li>
+                        <li>Herramientas estandarizadas para la gestión de datos.</li>
+                        <li>Automatización de procesos comunes.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">4. Gobernanza Federada</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Estándares comunes entre dominios.</li>
+                        <li>Interoperabilidad garantizada.</li>
+                        <li>Políticas de seguridad y cumplimiento unificadas.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Beneficios Clave</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="border p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">Escalabilidad Mejorada</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Eliminación de cuellos de botella centralizados.</li>
+                        <li>Crecimiento orgánico por dominio.</li>
+                        <li>Mayor capacidad de procesamiento distribuido.</li>
+                    </ul>
+                </div>
+
+                <div class="border p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">Agilidad Organizacional</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Reducción de dependencias entre equipos.</li>
+                        <li>Toma de decisiones más rápida.</li>
+                        <li>Innovación acelerada.</li>
+                    </ul>
+                </div>
+
+                <div class="border p-4 rounded">
+                    <h3 class="text-xl font-semibold mb-3">Mejor Calidad de Datos</h3>
+                    <ul class="list-disc pl-5">
+                        <li>Responsabilidad clara sobre la calidad.</li>
+                        <li>Mejores prácticas por dominio.</li>
+                        <li>Trazabilidad mejorada.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Recursos Adicionales</h2>
+            <ul class="list-disc pl-5">
+                <li>
+                    <a href="https://martinfowler.com/articles/data-mesh-principles.html" target="_blank"
+                        rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800">
+                        Data Mesh Principles and Logical Architecture
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.thoughtworks.com/insights/articles/data-mesh-architecture" target="_blank"
+                        rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800">
+                        The Data Mesh Architecture
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <div class="mt-8 border-t pt-4">
+            <a href="index.html" class="btn-back">Ir a Inicio</a>
+        </div>
+    </main>
+
+    <!-- Footer único -->
+    <div data-include="footer.html"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Espera a que todos los includes terminen de cargarse
+            setTimeout(function () {
+                var dateElement = document.getElementById('date-display');
+                if (!dateElement) return;
+
+                var months = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                ];
+
+                var now = new Date();
+                var day = now.getDate();
+                var month = months[now.getMonth()];
+                var year = now.getFullYear();
+
+                dateElement.innerHTML = month + " " + day + ", " + year;
+            }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+        });
+    </script>
+</body>
+
+</html>

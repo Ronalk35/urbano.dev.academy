@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas. Tutoriales, guías y mejores prácticas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="https://tudominio.com/assets/img/logo.png" />
+    <meta property="og:url" content="https://tudominio.com/blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+
+    <title>Programación en SQL Server: Transact-SQL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script src="/assets/js/includes.js" defer></script>
+
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .Section {
+            padding: 2rem 0;
+        }
+
+        .Container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        /* Reemplaza los estilos de listas actuales con estos */
+        /* Reemplaza los estilos de listas actuales con estos */
+        .Container ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            color: #38bdf8 !important;
+        }
+
+        .Container li::before {
+            content: '';
+            color: #38bdf8 !important;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .article-navigation a {
+            color: #38bdf8;
+            /* Cambia el color de los enlaces aquí */
+            text-decoration: none;
+        }
+
+
+
+        .sql-block {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sql-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        button {
+            background: #0ea5e9;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            right: 0.8rem;
+            top: 0.8rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        button:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #10b981;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-download::before {
+            content: "↓";
+            font-weight: bold;
+        }
+
+        /* Destacado de sintaxis */
+        .keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+
+        .comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .number {
+            color: #fda4af;
+        }
+
+        .function {
+            color: #c4b5fd;
+        }
+
+        /* Esquema de la página */
+        .page-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 2rem 0 1rem;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 2rem;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        .article-navigation {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid #334155;
+        }
+
+        .article-navigation h4 {
+            margin-top: 0;
+            color: #93c5fd;
+        }
+
+        .article-navigation ul {
+            background: none;
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, transparent);
+            margin: 2.5rem 0;
+            border-radius: 2px;
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .Container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .sql-block {
+                padding: 1rem;
+                margin: 1.2rem 0;
+            }
+
+            .sql-code {
+                font-size: 0.85rem;
+            }
+
+            button {
+                font-size: 0.6rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .sql-code {
+                font-size: 0.8rem;
+            }
+
+            .btn-back {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .btn-download {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="art_one">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <header class="page-header">
+        <div class="Container">
+            <h1 class="Title">Programación en SQL Server: Transact-SQL</h1>
+
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> Actualizado: Marzo 2025</span>
+                <span><i class="far fa-clock"></i> Tiempo de lectura: 8 min</span>
+                <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+            </div>
+
+            <div class="article-navigation">
+                <h4>Contenido del artículo</h4>
+                <ul>
+                    <li><a href="#identificadores">Identificadores en SQL Server</a></li>
+                    <li><a href="#variables">Variables en T-SQL</a></li>
+                    <li><a href="#control-flujo">Elementos de Control de Flujo</a></li>
+                    <li><a href="#errores">Control de Errores</a></li>
+                </ul>
+            </div>
+
+            <p>
+                Transact-SQL (T-SQL) es el lenguaje de programación que potencia SQL Server, permitiéndonos crear
+                desde consultas simples hasta procedimientos almacenados complejos. En esta guía, exploraremos los
+                fundamentos esenciales que todo desarrollador debe conocer para dominar T-SQL.
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <section class="Section">
+            <div class="Container">
+                <h2 id="identificadores" class="text-2xl font-semibold mb-4">1. Identificadores en SQL Server</h2>
+                <p>Los identificadores son nombres que asignamos a objetos en nuestra base de datos. Pueden ser:</p>
+                <ul>
+                    <li>Longitud máxima: 128 caracteres</li>
+                    <li>Deben comenzar con una letra o un carácter de subrayado (_)</li>
+                    <li>No pueden ser palabras reservadas</li>
+                    <li>Pueden contener letras, números y algunos caracteres especiales</li>
+                </ul>
+
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Ejemplos de 
+identificadores
+válidos</span>
+<span class="keyword">CREATE TABLE</span> Empleados_2024;
+<span class="keyword">CREATE PROCEDURE</span> sp_ObtenerVentas;
+<span class="keyword">DECLARE</span> @NombreVariable;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">1.2 Identificadores Delimitados</h3>
+                <p>Cuando necesitamos usar nombres especiales o palabras reservadas:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Ejemplo</span>
+<span class="keyword">CREATE TABLE</span> [Table]; <span class="comment">-- Usando una palabra reservada</span>
+<span class="keyword">CREATE TABLE</span> <span class="string">"Mi Tabla"</span>; <span class="comment">-- Usando espacios</span>
+<span class="keyword">CREATE TABLE</span> [Primera.Tabla]; <span class="comment">-- Usando puntos</span></pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h2 id="variables" class="text-2xl font-semibold mb-4">2. Variables en T-SQL</h2>
+                <h3 class="text-xl font-semibold mb-3">2.1 Declaración de Variables</h3>
+                <p>Las variables nos permiten almacenar valores temporalmente durante la ejecución de nuestro código.
+                </p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Declaración básica
+ de variables</span>
+<span class="keyword">DECLARE</span> @Nombre <span class="keyword">VARCHAR</span>(<span class="number">50</span>);
+<span class="keyword">DECLARE</span> @Edad <span class="keyword">INT</span>;
+<span class="keyword">DECLARE</span> @Salario <span class="keyword">DECIMAL</span>(<span class="number">10</span>,<span class="number">2</span>);
+<span class="keyword">DECLARE</span> @FechaNacimiento <span class="keyword">DATE</span>;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">2.2 Asignación de Valores</h3>
+                <p>Existen varias formas de asignar valores a variables:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Asignación directa</span>
+<span class="keyword">DECLARE</span> @Contador <span class="keyword">INT</span> = <span class="number">1</span>;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h2 id="control-flujo" class="text-2xl font-semibold mb-4">3. Elementos de Control de Flujo</h2>
+                <h3 class="text-xl font-semibold mb-3">3.1 Estructura IF</h3>
+                <p>La estructura IF nos permite ejecutar código condicionalmente:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Ejemplo básico de IF</span>
+<span class="keyword">DECLARE</span> @Edad <span class="keyword">INT</span> = <span class="number">25</span>;
+<span class="keyword">IF</span> @Edad >= <span class="number">18</span> <span class="keyword">BEGIN</span>
+    <span class="function">PRINT</span> <span class="string">'Es mayor de edad'</span>;
+<span class="keyword">END ELSE BEGIN</span>
+    <span class="function">PRINT</span> <span class="string">'Es menor de edad'</span>;
+<span class="keyword">END</span></pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">3.2 Estructura CASE</h3>
+                <p>CASE nos permite manejar múltiples condiciones de manera más elegante:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- CASE simple</span>
+<span class="keyword">DECLARE</span> @DiaSemana <span class="keyword">INT</span> = <span class="number">1</span>;
+<span class="keyword">SELECT CASE</span> @DiaSemana
+    <span class="keyword">WHEN</span> <span class="number">1</span> <span class="keyword">THEN</span> <span class="string">'Lunes'</span>
+    <span class="keyword">WHEN</span> <span class="number">2</span> <span class="keyword">THEN</span> <span class="string">'Martes'</span>
+    <span class="keyword">WHEN</span> <span class="number">3</span> <span class="keyword">THEN</span> <span class="string">'Miércoles'</span>
+    <span class="keyword">WHEN</span> <span class="number">4</span> <span class="keyword">THEN</span> <span class="string">'Jueves'</span>
+    <span class="keyword">WHEN</span> <span class="number">5</span> <span class="keyword">THEN</span> <span class="string">'Viernes'</span>
+    <span class="keyword">ELSE</span> <span class="string">'Fin de semana'</span>
+<span class="keyword">END AS</span> Dia;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">3.3 Estructura WHILE</h3>
+                <p>WHILE nos permite ejecutar código en bucle mientras se cumpla una condición:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Ejemplo básico de WHILE</span>
+<span class="keyword">DECLARE</span> @Contador <span class="keyword">INT</span> = <span class="number">1</span>;
+<span class="keyword">WHILE</span> @Contador <= <span class="number">5</span> <span class="keyword">BEGIN</span>
+    <span class="function">PRINT</span> <span class="string">'Iteración: '</span> + <span class="function">CAST</span>(@Contador <span class="keyword">AS VARCHAR</span>);
+    <span class="keyword">SET</span> @Contador = @Contador + <span class="number">1</span>;
+<span class="keyword">END</span></pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h2 id="errores" class="text-2xl font-semibold mb-4">4. Control de Errores</h2>
+                <h3 class="text-xl font-semibold mb-3">4.1 TRY / CATCH</h3>
+                <p>El manejo de errores es crucial para crear código robusto:</p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="keyword">BEGIN TRY</span>
+    <span class="comment">-- Código que puede generar
+ un error</span>
+    <span class="keyword">DECLARE</span> @Division <span class="keyword">INT</span>;
+    <span class="keyword">SET</span> @Division = <span class="number">10</span>/<span class="number">0</span>; <span class="comment">-- Generará un error</span>
+<span class="keyword">END TRY
+BEGIN CATCH</span>
+    <span class="keyword">SELECT</span> <span class="function">ERROR_NUMBER</span>() <span class="keyword">AS</span> NumeroError,
+           <span class="function">ERROR_MESSAGE</span>() <span class="keyword">AS</span> MensajeError;
+<span class="keyword">END CATCH;</span></pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h2 class="text-2xl font-semibold mb-4">Conclusión</h2>
+                <p>
+                    Dominar los fundamentos de T-SQL es esencial para cualquier desarrollador de SQL Server. Desde el
+                    manejo básico de variables hasta el control de transacciones, cada elemento juega un papel crucial
+                    en la creación de código robusto y eficiente.
+                </p>
+
+                <p>
+                    En este artículo, hemos cubierto los conceptos básicos de identificadores, variables, estructuras de
+                    control
+                    y manejo de errores. Estos son los bloques de construcción fundamentales para escribir scripts
+                    y procedimientos almacenados eficaces en SQL Server.
+                </p>
+
+                <p>
+                    Para profundizar en los temas tratados en este artículo, te
+                            recomendamos consultar los siguientes recursos. Además, puedes
+                            descargar nuestra base de datos de ejemplo "Empleados_2024"
+                            en donde puedes practicar lo aprendido.
+                </p>
+
+                <p>
+                    En próximos artículos, exploraremos temas más avanzados como procedimientos almacenados,
+                    desencadenadores (triggers), funciones y optimización de consultas.
+                </p>
+
+                <div class="mt-4">
+                    <a href="./assets/document/script_empleados_ruc.txt" download="script_empleados_ruc.txt"
+                        class="btn-download">
+                        Recursos
+                    </a>
+                </div>
+
+                <div class="mt-4">
+                    <a href="/index.html" class="btn-back">Ir a Inicio</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div data-include="footer.html"></div>
+
+    
+
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.previousElementSibling;
+            const code = codeBlock.innerText;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copiado';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // Resaltado de código para bloques SQL
+        document.addEventListener('DOMContentLoaded', function () {
+            // Esta función no modifica el DOM directamente porque ya hemos aplicado 
+            // clases como "keyword", "comment", etc. en el marcado HTML
+
+            // Hacer que los enlaces de navegación tengan desplazamiento suave
+            document.querySelectorAll('.article-navigation a').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Espera a que todos los includes terminen de cargarse
+            setTimeout(function () {
+                var dateElement = document.getElementById('date-display');
+                if (!dateElement) return;
+
+                var months = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                ];
+
+                var now = new Date();
+                var day = now.getDate();
+                var month = months[now.getMonth()];
+                var year = now.getFullYear();
+
+                dateElement.innerHTML = month + " " + day + ", " + year;
+            }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+        });
+    </script>
+</body>
+
+</html>

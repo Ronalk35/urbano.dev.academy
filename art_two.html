@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas. Tutoriales, guías y mejores prácticas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="https://tudominio.com/assets/img/logo.png" />
+    <meta property="og:url" content="https://tudominio.com/blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+    <title>Índices y Optimización de Consultas en SQL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <script src="/assets/js/includes.js" defer></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .Section {
+            padding: 2rem 0;
+        }
+
+        .article-navigation a {
+            color: #38bdf8;
+            /* Cambia el color de los enlaces aquí */
+            text-decoration: none;
+            /* Elimina el subrayado de los enlaces */
+        }
+
+        .article-navigation a:hover {
+            color: #059669;
+            /* Cambia el color de los enlaces cuando el ratón pasa sobre ellos */
+        }
+
+        .section a {
+            color: #38bdf8;
+            /* Color de los enlaces */
+            text-decoration: none;
+            /* Elimina el subrayado de los enlaces */
+        }
+
+        .section a:hover {
+            color: #059669;
+            /* Color cuando el ratón pasa sobre los enlaces (verde) */
+        }
+
+        .Container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        /* Reemplaza los estilos de listas actuales con estos */
+        /* Reemplaza los estilos de listas actuales con estos */
+        .Container ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .Container li::before {
+            content: '';
+            color: #38bdf8;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .sql-block {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sql-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        button {
+            background: #0ea5e9;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            right: 0.8rem;
+            top: 0.8rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        button:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        /* Destacado de sintaxis */
+        .keyword {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+
+        .comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .number {
+            color: #fda4af;
+        }
+
+        .function {
+            color: #c4b5fd;
+        }
+
+        /* Esquema de la página */
+        .page-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 2rem 0 1rem;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 2rem;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        .article-navigation {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid #334155;
+        }
+
+        .article-navigation h4 {
+            margin-top: 0;
+            color: #93c5fd;
+        }
+
+        .article-navigation ul {
+            background: none;
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, transparent);
+            margin: 2.5rem 0;
+            border-radius: 2px;
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .Container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .sql-block {
+                padding: 1rem;
+                margin: 1.2rem 0;
+            }
+
+            .sql-code {
+                font-size: 0.85rem;
+            }
+
+            button {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .sql-code {
+                font-size: 0.8rem;
+            }
+
+            .btn-back {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+
+            .btn-download {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #10b981;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-download::before {
+            content: "↓";
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="art_two">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <header class="page-header">
+        <div class="Container">
+            <h1 class="Title">Índices y Optimización de Consultas en SQL</h1>
+
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> Actualizado: Marzo 2025</span>
+                <span><i class="far fa-clock"></i> Tiempo de lectura: 8 min</span>
+                <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+            </div>
+
+            <div class="article-navigation">
+                <h4>Contenido del artículo</h4>
+                <ul>
+                    <li><a href="#introduccion">Introducción</a></li>
+                    <li><a href="#indices">Índices: Acelerando el Acceso a los Datos</a></li>
+                    <li><a href="#tipos-indices">Tipos de Índices</a></li>
+                    <li><a href="#estrategias">Estrategias de Indexación</a></li>
+                    <li><a href="#optimizacion">Optimización de Consultas SQL</a></li>
+                    <li><a href="#conclusion">Conclusión</a></li>
+                </ul>
+            </div>
+
+            <p>
+                El rendimiento de las bases de datos es un factor crítico en el desarrollo de aplicaciones modernas. A
+                medida que los volúmenes de datos crecen exponencialmente, se vuelve imprescindible aplicar técnicas de
+                optimización para mantener tiempos de respuesta aceptables. En este artículo, exploraremos dos elementos
+                fundamentales para mejorar el rendimiento: los índices y las técnicas de optimización de consultas SQL.
+            </p>
+        </div>
+    </header>
+
+    <main>
+        <section class="Section" id="introduccion">
+            <div class="Container">
+                <h2 id="introduccion" class="text-2xl font-semibold mb-4">Introducción</h2>
+                <p>
+                    El rendimiento de las bases de datos es un factor crítico en el desarrollo de aplicaciones modernas.
+                    A medida que los volúmenes de datos crecen exponencialmente, se vuelve imprescindible aplicar
+                    técnicas de optimización para mantener tiempos de respuesta aceptables. En este artículo,
+                    exploraremos dos elementos fundamentales para mejorar el rendimiento: los índices y las técnicas de
+                    optimización de consultas SQL.
+                </p>
+
+                <div class="section-divider"></div>
+            </div>
+        </section>
+
+        <section class="Section" id="indices">
+            <div class="Container">
+                <h2 id="indices" class="text-2xl font-semibold mb-4">Índices: Acelerando el Acceso a los Datos</h2>
+                <p>
+                    Los índices son estructuras de datos especiales que mejoran la velocidad de las operaciones de
+                    recuperación en una base de datos. Funcionan de manera similar al índice de un libro, permitiendo al
+                    motor de base de datos encontrar rápidamente la información sin necesidad de explorar cada registro.
+                </p>
+
+                <div class="section-divider"></div>
+            </div>
+        </section>
+
+        <section class="Section" id="tipos-indices">
+            <div class="Container">
+                <h2 id="tipos-indices" class="text-2xl font-semibold mb-4">Tipos de Índices</h2>
+                <h3 class="text-xl font-semibold mb-3">1. Índices Clustered</h3>
+                <p>
+                    Los índices clustered determinan el orden físico de los datos en una tabla. Algunas características
+                    importantes:
+                </p>
+                <ul>
+                    <li>Solo puede existir un índice clustered por tabla</li>
+                    <li>Reorganiza físicamente los datos de la tabla</li>
+                    <li>Es ideal para columnas frecuentemente utilizadas en cláusulas ORDER BY</li>
+                    <li>Mejora significativamente las consultas de rango</li>
+                </ul>
+
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Creación de índice
+-- clustered</span>
+<span class="keyword">CREATE CLUSTERED INDEX</span> IX_Empleados_ID 
+<span class="keyword">ON</span> Empleados(ID);</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">2. Índices Non-Clustered</h3>
+                <p>
+                    Los índices non-clustered son estructuras separadas que contienen la clave del índice y un puntero a
+                    los datos originales. Características principales:
+                </p>
+                <ul>
+                    <li>Una tabla puede tener múltiples índices non-clustered</li>
+                    <li>No alteran el orden físico de los datos</li>
+                    <li>Son ideales para columnas de búsqueda frecuente</li>
+                    <li>Ocupan espacio adicional de almacenamiento</li>
+                </ul>
+
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Ejemplo de índice 
+-- non-clustered</span>
+<span class="keyword">CREATE NONCLUSTERED INDEX</span> IX_Empleados_Apellido 
+<span class="keyword">ON</span> Empleados(Apellido);
+
+<span class="comment">-- Índice compuesto con múltiples columnas</span>
+<span class="keyword">CREATE NONCLUSTERED INDEX</span> IX_Ventas_Fecha_Producto 
+<span class="keyword">ON</span> Ventas(Fecha, ID_Producto);</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <div class="section-divider"></div>
+            </div>
+        </section>
+
+        <section class="Section" id="estrategias">
+            <div class="Container">
+                <h2 class="text-2xl font-semibold mb-4">Estrategias de Indexación</h2>
+                <p>
+                    La creación de índices debe seguir una estrategia bien planificada para maximizar su beneficio:
+                </p>
+                <h3 class="text-xl font-semibold mb-3">1. Selectividad del Índice</h3>
+                <ul>
+                    <li>Índices en columnas con alta cardinalidad (muchos valores únicos)</li>
+                    <li>Evitar índices en columnas con pocos valores distintos</li>
+                    <li>Considerar la densidad de datos para determinar la eficacia potencial</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-3">2. Índices Cubiertos</h3>
+                <ul>
+                    <li>Incluyen columnas adicionales para evitar búsquedas en la tabla</li>
+                    <li>Optimizan consultas específicas incluyendo todas las columnas necesarias</li>
+                    <li>Reducen significativamente las operaciones de E/S</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-3">3. Mantenimiento de Índices</h3>
+                <ul>
+                    <li>Reconstruir o reorganizar índices fragmentados</li>
+                    <li>Actualizar estadísticas regularmente</li>
+                    <li>Monitorear uso y rendimiento de índices</li>
+                </ul>
+
+                <div class="section-divider"></div>
+            </div>
+        </section>
+
+        <section class="Section" id="optimizacion">
+            <div class="Container">
+                <h2 class="text-2xl font-semibold mb-4">Optimización de Consultas SQL</h2>
+                <h3 class="text-xl font-semibold mb-3">Análisis de Planes de Ejecución</h3>
+                <p>
+                    Comprender cómo el motor de base de datos ejecuta las consultas es fundamental para optimizarlas.
+                    Los planes de ejecución proporcionan información detallada sobre las operaciones realizadas:
+                </p>
+                <ul>
+                    <li>Tipos de operaciones (scans, seeks, joins)</li>
+                    <li>Uso de índices</li>
+                    <li>Coste estimado de cada operación</li>
+                    <li>Posibles cuellos de botella</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-3">Ejemplo de obtención de plan de ejecución:</h3>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Visualizar plan 
+-- de ejecución</span>
+<span class="keyword">SET</span> SHOWPLAN_ALL <span class="keyword">ON</span>;
+<span class="keyword">GO</span>
+
+<span class="keyword">SELECT</span> e.Nombre, e.Apellido, d.Nombre <span class="keyword">as</span> Departamento
+<span class="keyword">FROM</span> Empleados e
+<span class="keyword">JOIN</span> Departamentos d <span class="keyword">ON</span> e.ID_Departamento = d.ID
+<span class="keyword">WHERE</span> e.Fecha_Contratacion > '2020-01-01';
+
+<span class="keyword">SET</span> SHOWPLAN_ALL <span class="keyword">OFF</span>;
+<span class="keyword">GO</span></pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h2 class="text-2xl font-semibold mb-4">Técnicas de Optimización</h2>
+                <h3 class="text-xl font-semibold mb-3">1. Filtrado Eficiente</h3>
+                <p>
+                    Optimizar las cláusulas WHERE es esencial para mejorar el rendimiento:
+                </p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Evitar</span>
+
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Empleados <span class="keyword">WHERE</span> YEAR(Fecha_Contratacion) = 2023;
+
+<span class="comment">-- Preferir (permite usar índices)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Empleados <span class="keyword">WHERE</span> Fecha_Contratacion >= '2023-01-01' 
+                           <span class="keyword">AND</span> Fecha_Contratacion < '2024-01-01';</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">2. Optimización de JOINs</h3>
+                <ul>
+                    <li>Unir tablas en orden de menor a mayor tamaño cuando sea posible</li>
+                    <li>Asegurar que las columnas de unión estén indexadas</li>
+                    <li>Utilizar el tipo de JOIN más adecuado según el caso</li>
+                    <li>Evitar cruces cartesianos (CROSS JOIN) cuando no sean necesarios</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-3">3. Minimizar Datos Transferidos</h3>
+                <ul>
+                    <li>Seleccionar solo las columnas necesarias (evitar SELECT *)</li>
+                    <li>Utilizar TOP o LIMIT para limitar resultados</li>
+                    <li>Considerar técnicas de paginación para conjuntos grandes</li>
+                </ul>
+
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Optimizado para 
+-- transferencia de datos</span>
+<span class="keyword">SELECT</span> ID, Nombre, Apellido
+<span class="keyword">FROM</span> Empleados
+<span class="keyword">WHERE</span> Departamento = 'IT'
+<span class="keyword">ORDER BY</span> Fecha_Contratacion DESC
+<span class="keyword">OFFSET</span> 20 ROWS <span class="keyword">FETCH NEXT</span> 10 ROWS ONLY;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h2 class="text-2xl font-semibold mb-4">Uso de Estadísticas</h2>
+                <p>
+                    Las estadísticas son colecciones de datos sobre la distribución de valores en las columnas y son
+                    fundamentales para que el optimizador de consultas genere planes eficientes:
+                </p>
+                <h3 class="text-xl font-semibold mb-3">1. Gestión de Estadísticas</h3>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Actualizar 
+-- estadísticas</span>
+<span class="keyword">UPDATE STATISTICS</span> Ventas;
+
+<span class="comment">-- Crear estadísticas específicas</span>
+<span class="keyword">CREATE STATISTICS</span> Stats_Ventas_Region 
+<span class="keyword">ON</span> Ventas(Region);
+
+<span class="comment">-- Ver estadísticas de una tabla</span>
+<span class="keyword">DBCC SHOW_STATISTICS</span>('Ventas', 'IX_Ventas_Fecha');</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">2. Impacto en el Rendimiento</h3>
+                <ul>
+                    <li>Estadísticas obsoletas pueden llevar a planes de ejecución sub-óptimos</li>
+                    <li>Actualización automática vs. manual</li>
+                    <li>Considerar actualizar después de cambios significativos en los datos</li>
+                </ul>
+
+                <h2 class="text-2xl font-semibold mb-4">Casos Prácticos de Optimización</h2>
+                <h3 class="text-xl font-semibold mb-3">1. Mejora de Consultas de Reportes</h3>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Antes: Consulta lenta 
+-- para reporte de ventas</span>
+<span class="keyword">SELECT</span> c.Nombre, c.Apellido, 
+       <span class="keyword">SUM</span>(v.Monto) <span class="keyword">as</span> TotalCompras,
+       <span class="keyword">COUNT</span>(v.ID) <span class="keyword">as</span> NumeroTransacciones
+<span class="keyword">FROM</span> Clientes c
+<span class="keyword">LEFT JOIN</span> Ventas v <span class="keyword">ON</span> c.ID = v.ID_Cliente
+<span class="keyword">WHERE</span> v.Fecha <span class="keyword">BETWEEN</span> '2023-01-01' <span class="keyword">AND</span> '2023-12-31'
+<span class="keyword">GROUP BY</span> c.Nombre, c.Apellido
+<span class="keyword">ORDER BY</span> TotalCompras DESC;
+
+<span class="comment">-- Después: Consulta optimizada</span>
+<span class="keyword">SELECT</span> c.Nombre, c.Apellido, 
+       <span class="keyword">SUM</span>(v.Monto) <span class="keyword">as</span> TotalCompras,
+       <span class="keyword">COUNT</span>(v.ID) <span class="keyword">as</span> NumeroTransacciones
+<span class="keyword">FROM</span> Clientes c
+<span class="keyword">INNER JOIN</span> Ventas v <span class="keyword">ON</span> c.ID = v.ID_Cliente
+       <span class="keyword">AND</span> v.Fecha >= '2023-01-01' 
+       <span class="keyword">AND</span> v.Fecha < '2024-01-01'
+<span class="keyword">GROUP BY</span> c.Nombre, c.Apellido
+<span class="keyword">ORDER BY</span> TotalCompras DESC;
+
+<span class="comment">-- Índices necesarios</span>
+<span class="keyword">CREATE NONCLUSTERED INDEX</span> IX_Ventas_Cliente_Fecha 
+<span class="keyword">ON</span> Ventas(ID_Cliente, Fecha) <span class="keyword">INCLUDE</span>(Monto);</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-3">2. Optimización de Búsquedas de Inventario</h3>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Optimización de 
+-- búsqueda de inventario</span>
+<span class="keyword">CREATE NONCLUSTERED INDEX</span> IX_Productos_Stock 
+<span class="keyword">ON</span> Productos(Categoria, Stock)
+<span class="keyword">INCLUDE</span>(Nombre, Precio, UltimaActualizacion);
+
+<span class="comment">-- Consulta optimizada para búsqueda de productos con stock bajo</span>
+<span class="keyword">SELECT</span> Nombre, Stock, Precio, UltimaActualizacion
+<span class="keyword">FROM</span> Productos
+<span class="keyword">WHERE</span> Categoria = 'Electrónicos' 
+      <span class="keyword">AND</span> Stock < 10
+<span class="keyword">ORDER BY</span> Stock ASC;</pre>
+                    <button onclick="copyCode(this)"><i class="far fa-copy"></i> Copiar</button>
+                </div>
+
+                <h2 class="text-2xl font-semibold mb-4">Herramientas de Diagnóstico</h2>
+                <h3 class="text-xl font-semibold mb-3">1. Dynamic Management Views (DMVs)</h3>
+                <p>
+                    Las DMVs proporcionan información valiosa sobre el rendimiento y uso de recursos del sistema:
+                </p>
+                <div class="sql-block">
+                    <pre class="sql-code"><span class="comment">-- Consultas más costosas</span>
+<span class="keyword">SELECT TOP</span> 10 
+    qs.total_elapsed_time / qs.execution_count <span class="keyword">AS</span> avg_elapsed_time,
+    SUBSTRING(qt.text, (qs.statement_start_offset/2) + 1,
+        ((CASE qs.statement_end_offset
+          WHEN -1 <span class="keyword">THEN</span> DATALENGTH(qt.text)
+         <span class="keyword">ELSE</span> qs.statement_end_offset END 
+            - qs.statement_start_offset)/2) + 1) <span class="keyword">AS</span> query_text,
+    qs.execution_count
+<span class="keyword">FROM</span> sys.dm_exec_query_stats qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) <span class="keyword">as</span> qt
+<span class="keyword">ORDER BY</span> avg_elapsed_time DESC;
+
+<span class="comment">-- Índices faltantes recomendados</span>
+<span class="keyword">SELECT</span> 
+    DB_NAME(mid.database_id) <span class="keyword">AS</span> DatabaseName,
+    OBJECT_NAME(mid.[object_id]) <span class="keyword">AS</span> TableName,
+    mid.equality_columns, 
+    mid.inequality_columns,
+    mid.included_columns,
+    migs.avg_total_user_cost * migs.avg_user_impact * (migs.user_seeks + migs.user_scans) <span class="keyword">AS</span> improvement_measure
+<span class="keyword">FROM</span> sys.dm_db_missing_index_group_stats <span class="keyword">AS</span> migs
+INNER JOIN sys.dm_db_missing_index_groups <span class="keyword">AS</span> mig 
+    <span class="keyword">ON</span> migs.group_handle = mig.index_group_handle
+INNER JOIN sys.dm_db_missing_index_details <span class="keyword">AS</span> mid 
+    <span class="keyword">ON</span> mig.index_handle = mid.index_handle
+<span class="keyword">ORDER BY</span> improvement_measure DESC;</pre>
+                    <button onclick="copyCode(this)">Copiar</button>
+                </div>
+
+                <h2 class="text-xl font-semibold mb-3">2. SQL Server Profiler y Extended Events</h2>
+                <p>
+                    La creación de índices debe seguir una estrategia bien planificada para maximizar su beneficio:
+                </p>
+                <ul>
+                    <li>Capturar eventos y consultas en tiempo real</li>
+                    <li>Identificar consultas de larga duración</li>
+                    <li>Analizar patrones de acceso a datos</li>
+                    <li>Detectar bloqueos y contención de recursos</li>
+                </ul>
+
+
+                <section class="section">
+                    <div class="container">
+                        <h2 class="text-2xl font-semibold mb-4">Conclusión</h2>
+                        <div class="mb-8">
+                            <p class="text-lg mb-4">
+                                La optimización de consultas y el uso adecuado de índices son
+                                aspectos fundamentales para garantizar el buen rendimiento de las
+                                bases de datos SQL. A medida que los volúmenes de datos crecen,
+                                estas técnicas se vuelven aún más importantes para mantener
+                                tiempos de respuesta aceptables.
+                            </p>
+                            <p>
+                                Recuerda que la optimización es un proceso continuo que requiere
+                                monitoreo, análisis y ajustes. No existe una solución única para
+                                todos los escenarios, y las estrategias deben adaptarse a las
+                                características específicas de cada aplicación y conjunto de
+                                datos.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section">
+                    <div class="container">
+                        <h2 class="text-2xl font-semibold mb-4">Recursos Adicionales</h2>
+                        <p>
+                            Para profundizar en los temas tratados en este artículo, te
+                            recomendamos consultar los siguientes recursos. Además, puedes
+                            descargar nuestra base de datos de ejemplo "OptimizacionSQL"
+                            con todos los índices configurados y consultas optimizadas que hemos
+                            analizado en este artículo. Simplemente descarga el script,
+                            ejecútalo en SQL Server Management Studio y podrás experimentar con
+                            todas las técnicas de optimización mencionadas.
+                        </p>
+                        <ul class="list-disc pl-5">
+                            <li>
+                                <a href="https://docs.microsoft.com/es-es/sql/relational-databases/indexes/clustered-and-nonclustered-indexes-described"
+                                    target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800">
+                                    Microsoft SQL Server - Descripción de Índices
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://use-the-index-luke.com/" target="_blank" rel="noopener noreferrer"
+                                    class="text-blue-600 hover:text-blue-800">
+                                    Use The Index, Luke! - Tutorial de Indexación SQL
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.sqlshack.com/query-optimization-techniques-in-sql-server-tips-and-tricks/"
+                                    target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800">
+                                    SQLShack - Técnicas Avanzadas de Optimización
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <div class="mt-4">
+                    <a href="/assets/document/script_optimizacionSQL.txt" download="script_optimizacionSQL.txt"
+                        class="btn-download">
+                        Recursos
+                    </a>
+                </div>
+
+                <div class="mt-8 border-t pt-4">
+                    <a href="index.html" class="btn-back">Ir a Inicio</a>
+                </div>
+    </main>
+
+    <!-- Footer único -->
+    <div data-include="footer.html"></div>
+
+    
+    <script>
+        // Función para copiar el contenido de cada bloque SQL
+        function copyCode(button) {
+            const code = button.previousElementSibling.innerText;
+
+            // Verificar si se está utilizando un dispositivo móvil y usar el portapapeles
+            if (navigator.clipboard) {
+                navigator.clipboard
+                    .writeText(code)
+                    .then(() => {
+                        button.innerText = "Copiado";
+                        setTimeout(() => {
+                            button.innerText = "Copiar";
+                        }, 2000);
+                    })
+                    .catch((err) => {
+                        console.error("Error al copiar", err);
+                    });
+            } else {
+                // Fallback para navegadores que no soportan Clipboard API
+                const textArea = document.createElement("textarea");
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                button.innerText = "Copiado";
+                setTimeout(() => {
+                    button.innerText = "Copiar";
+                }, 2000);
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Espera a que todos los includes terminen de cargarse
+            setTimeout(function () {
+                var dateElement = document.getElementById('date-display');
+                if (!dateElement) return;
+
+                var months = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                ];
+
+                var now = new Date();
+                var day = now.getDate();
+                var month = months[now.getMonth()];
+                var year = now.getFullYear();
+
+                dateElement.innerHTML = month + " " + day + ", " + year;
+            }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+        });
+    </script>
+</body>
+
+</html>

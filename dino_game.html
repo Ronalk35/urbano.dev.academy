@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: dark)">
+
+      <!-- Etiquetas meta para SEO -->
+  <meta name="description" content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas para desarrolladores por Urbano.Dev Academy." />
+  <meta name="keywords" content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+  <meta name="author" content="Urbano.Dev Academy" />
+
+  <!-- Open Graph para compartir en redes sociales -->
+  <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+  <meta property="og:description" content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+  <meta property="og:image" content="https://ronalk35.github.io/assets/img/ronald_desktop.jpg" />
+  <meta property="og:url" content="http://192.168.18.141:5500/archivo.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Urbano.Dev Academy" />
+
+    <!-- Información adicional -->
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Spanish">
+    <meta name="revisit-after" content="7 days">
+    <meta name="theme-color" content="#0f172a">
+    <title>Dino Game 🦖 | Urbano.Dev Academy</title>
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+
+        body {
+            height: 100vh;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 960px;
+        }
+
+        .Title {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            text-transform: uppercase;
+            margin: 0 0 60px 0;
+            text-align: center;
+            letter-spacing: 0.15rem;
+            font-weight: 700;
+            color: #fff;
+            transition: var(--transition);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .contenedor {
+            width: 920px;
+            height: 280px;
+            margin: 0 auto;
+
+            position: relative;
+
+            background: linear-gradient(#87CEEB, transparent) #e6f7ff;
+            transition: background-color 1s linear;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .mediodia {
+            /* Color de mediodía: cielo azul brillante */
+            background: linear-gradient(#87CEEB, transparent) #e6f7ff;
+        }
+
+        .tarde {
+            /* Color de tarde/atardecer: tonos anaranjados */
+            background: linear-gradient(#FF8C00, transparent) #ffcc99;
+        }
+
+        .noche {
+            /* Color de noche: azul oscuro con estrellas */
+            background: linear-gradient(#191970, transparent) #000033;
+        }
+
+        .dino {
+            width: 84px;
+            height: 84px;
+
+            position: absolute;
+            bottom: 22px;
+            left: 42px;
+            z-index: 2;
+
+            background: url(assets/img/dino.png) repeat-x 0px 0px;
+            background-size: 336px 84px;
+            background-position-x: 0px;
+
+            filter: hue-rotate(100deg) saturate(150%);
+        }
+
+        .dino-corriendo {
+            animation: animarDino 0.25s steps(2) infinite;
+        }
+
+        .dino-estrellado {
+            background-position-x: -252px;
+        }
+
+        .suelo {
+            width: 200%;
+            height: 42px;
+
+            position: absolute;
+            bottom: 0;
+            left: 0;
+
+            background: url(assets/img/suelo.png) repeat-x 0px 0px;
+            background-size: 50% 42px;
+        }
+
+        .cactus {
+            width: 46px;
+            height: 96px;
+
+            position: absolute;
+            bottom: 16px;
+            left: 600px;
+            z-index: 1;
+
+            background: url(assets/img/cactus1.png) no-repeat;
+        }
+
+        .cactus2 {
+            width: 98px;
+            height: 66px;
+
+            background: url(assets/img/cactus2.png) no-repeat;
+        }
+
+        .nube {
+            width: 92px;
+            height: 26px;
+
+            position: absolute;
+            z-index: 0;
+
+            background: url(assets/img/nube.png) no-repeat;
+            background-size: 92px 26px;
+        }
+
+        .score {
+            width: 100px;
+            height: 30px;
+
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            z-index: 10;
+
+            color: #d48871;
+            font-family: Verdana;
+            font-size: 30px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .game-over {
+            display: none;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+
+            text-align: center;
+            color: #7e928b;
+            font-size: 30px;
+            font-family: Verdana;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons-container {
+            display: none;
+            justify-content: center;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 11;
+            width: 100%;
+        }
+
+        .button {
+            background-color: #d48871;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            background-color: #c67862;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes animarDino {
+            from {
+                background-position-x: -84px;
+            }
+
+            to {
+                background-position-x: -252px;
+            }
+        }
+
+        /* Código responsivo para el juego de dinosaurio */
+        @media screen and (max-width: 960px) {
+            .contenedor {
+                width: 95%;
+                height: 240px;
+                margin: 0 auto;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .contenedor {
+                width: 95%;
+                height: 200px;
+            }
+
+            .score {
+                font-size: 24px;
+                top: 5px;
+                right: 10px;
+            }
+
+            .game-over {
+                font-size: 24px;
+            }
+
+            .buttons-container {
+                bottom: 20px;
+            }
+
+            .button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .Title {
+        font-size: 2.5rem;
+        margin: 0 0 30px 0; /* Aumentado de 15px a 30px */
+    }
+        }
+
+        @media screen and (max-width: 480px) {
+            .contenedor {
+                width: 95%;
+                height: 260px;
+            }
+
+            .score {
+                font-size: 20px;
+            }
+
+            .game-over {
+                font-size: 20px;
+            }
+
+            .buttons-container {
+                bottom: 15px;
+            }
+
+            .button {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin: 0 5px;
+            }
+
+            /* Ajustar tamaño del dinosaurio en móvil */
+            .dino {
+                transform: scale(0.8);
+                transform-origin: bottom left;
+            }
+
+            /* Ajustar tamaño de los cactus en móvil */
+            .cactus,
+            .cactus2 {
+                transform: scale(0.8);
+                transform-origin: bottom left;
+            }
+            .Title {
+        font-size: 2rem;
+        margin: 0 0 30px 0; /* Aumentado de 10px a 25px */
+        letter-spacing: 0.1rem;
+    }
+        }
+
+        /* Añadir soporte para control táctil */
+        @media (pointer: coarse) {
+            body:after {
+                content: "Toca la pantalla para saltar 📱";
+                position: fixed;
+                bottom: 10px;
+                width: 100%;
+                text-align: center;
+                color: #fff;
+                font-size: 14px;
+                opacity: 0.7;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="game-container">
+        <h1 class="Title">Dino Game 🦖</h1>
+        <div class="contenedor">
+            <div class="suelo"></div>
+            <div class="dino dino-corriendo"></div>
+            <div class="score">0</div>
+            <div class="game-over">GAME OVER 💥</div>
+            <div class="buttons-container">
+                <button class="button" id="restart-button">Reanudar</button>
+                <button class="button" id="home-button">Inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //****** GAME LOOP ********//
+        var time = new Date();
+        var deltaTime = 0;
+
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            setTimeout(Init, 1);
+        } else {
+            document.addEventListener("DOMContentLoaded", Init);
+        }
+
+        function Init() {
+            time = new Date();
+            Start();
+            Loop();
+        }
+
+        function Loop() {
+            deltaTime = (new Date() - time) / 1000;
+            time = new Date();
+            Update();
+            requestAnimationFrame(Loop);
+        }
+
+        //****** GAME LOGIC ********//
+
+        var sueloY = 22;
+        var velY = 0;
+        var impulso = 900;
+        var gravedad = 2500;
+
+        var dinoPosX = 42;
+        var dinoPosY = sueloY;
+
+        var sueloX = 0;
+        var velEscenario = 1280 / 3;
+        var gameVel = 1;
+        var score = 0;
+
+        var parado = false;
+        var saltando = false;
+
+        var tiempoHastaObstaculo = 2;
+        var tiempoObstaculoMin = 0.7;
+        var tiempoObstaculoMax = 1.8;
+        var obstaculoPosY = 16;
+        var obstaculos = [];
+
+        var tiempoHastaNube = 0.5;
+        var tiempoNubeMin = 0.7;
+        var tiempoNubeMax = 2.7;
+        var maxNubeY = 270;
+        var minNubeY = 100;
+        var nubes = [];
+        var velNube = 0.5;
+
+        var contenedor;
+        var dino;
+        var textoScore;
+        var suelo;
+        var gameOver;
+        var buttonsContainer;
+        var restartButton;
+        var homeButton;
+
+        function Start() {
+            gameOver = document.querySelector(".game-over");
+            suelo = document.querySelector(".suelo");
+            contenedor = document.querySelector(".contenedor");
+            textoScore = document.querySelector(".score");
+            dino = document.querySelector(".dino");
+            buttonsContainer = document.querySelector(".buttons-container");
+            restartButton = document.getElementById("restart-button");
+            homeButton = document.getElementById("home-button");
+
+            document.addEventListener("keydown", HandleKeyDown);
+
+            // Event listeners para los botones
+            restartButton.addEventListener("click", RestartGame);
+            homeButton.addEventListener("click", GoToHome);
+        }
+
+        function Update() {
+            if (parado) return;
+
+            MoverDinosaurio();
+            MoverSuelo();
+            DecidirCrearObstaculos();
+            DecidirCrearNubes();
+            MoverObstaculos();
+            MoverNubes();
+            DetectarColision();
+
+            velY -= gravedad * deltaTime;
+        }
+
+        function HandleKeyDown(ev) {
+            if (ev.keyCode == 32) {
+                Saltar();
+            }
+        }
+
+        function Saltar() {
+            if (dinoPosY === sueloY) {
+                saltando = true;
+                velY = impulso;
+                dino.classList.remove("dino-corriendo");
+            }
+        }
+
+        function MoverDinosaurio() {
+            dinoPosY += velY * deltaTime;
+            if (dinoPosY < sueloY) {
+                TocarSuelo();
+            }
+            dino.style.bottom = dinoPosY + "px";
+        }
+
+        function TocarSuelo() {
+            dinoPosY = sueloY;
+            velY = 0;
+            if (saltando) {
+                dino.classList.add("dino-corriendo");
+            }
+            saltando = false;
+        }
+
+        function MoverSuelo() {
+            sueloX += CalcularDesplazamiento();
+            suelo.style.left = -(sueloX % contenedor.clientWidth) + "px";
+        }
+
+        function CalcularDesplazamiento() {
+            return velEscenario * deltaTime * gameVel;
+        }
+
+        function Estrellarse() {
+            dino.classList.remove("dino-corriendo");
+            dino.classList.add("dino-estrellado");
+            parado = true;
+        }
+
+        function DecidirCrearObstaculos() {
+            tiempoHastaObstaculo -= deltaTime;
+            if (tiempoHastaObstaculo <= 0) {
+                CrearObstaculo();
+            }
+        }
+
+        function DecidirCrearNubes() {
+            tiempoHastaNube -= deltaTime;
+            if (tiempoHastaNube <= 0) {
+                CrearNube();
+            }
+        }
+
+        function CrearObstaculo() {
+            var obstaculo = document.createElement("div");
+            contenedor.appendChild(obstaculo);
+            obstaculo.classList.add("cactus");
+            if (Math.random() > 0.5) obstaculo.classList.add("cactus2");
+            obstaculo.posX = contenedor.clientWidth;
+            obstaculo.style.left = contenedor.clientWidth + "px";
+
+            obstaculos.push(obstaculo);
+            tiempoHastaObstaculo = tiempoObstaculoMin + Math.random() * (tiempoObstaculoMax - tiempoObstaculoMin) / gameVel;
+        }
+
+        function CrearNube() {
+            var nube = document.createElement("div");
+            contenedor.appendChild(nube);
+            nube.classList.add("nube");
+            nube.posX = contenedor.clientWidth;
+            nube.style.left = contenedor.clientWidth + "px";
+            nube.style.bottom = minNubeY + Math.random() * (maxNubeY - minNubeY) + "px";
+
+            nubes.push(nube);
+            tiempoHastaNube = tiempoNubeMin + Math.random() * (tiempoNubeMax - tiempoNubeMin) / gameVel;
+        }
+
+        function MoverObstaculos() {
+            for (var i = obstaculos.length - 1; i >= 0; i--) {
+                if (obstaculos[i].posX < -obstaculos[i].clientWidth) {
+                    obstaculos[i].parentNode.removeChild(obstaculos[i]);
+                    obstaculos.splice(i, 1);
+                    GanarPuntos();
+                } else {
+                    obstaculos[i].posX -= CalcularDesplazamiento();
+                    obstaculos[i].style.left = obstaculos[i].posX + "px";
+                }
+            }
+        }
+
+        function MoverNubes() {
+            for (var i = nubes.length - 1; i >= 0; i--) {
+                if (nubes[i].posX < -nubes[i].clientWidth) {
+                    nubes[i].parentNode.removeChild(nubes[i]);
+                    nubes.splice(i, 1);
+                } else {
+                    nubes[i].posX -= CalcularDesplazamiento() * velNube;
+                    nubes[i].style.left = nubes[i].posX + "px";
+                }
+            }
+        }
+
+        function GanarPuntos() {
+            score++;
+            textoScore.innerText = score;
+            if (score == 5) {
+                gameVel = 1.5;
+                contenedor.classList.add("mediodia");
+            } else if (score == 10) {
+                gameVel = 2;
+                contenedor.classList.add("tarde");
+            } else if (score == 20) {
+                gameVel = 3;
+                contenedor.classList.add("noche");
+            }
+            suelo.style.animationDuration = (3 / gameVel) + "s";
+        }
+
+        function GameOver() {
+            Estrellarse();
+            gameOver.style.display = "block";
+            // Mostrar los botones al perder
+            buttonsContainer.style.display = "flex";
+        }
+
+        function RestartGame() {
+            // Restablecer variables del juego
+            parado = false;
+            saltando = false;
+            score = 0;
+            gameVel = 1;
+
+            // Ocultar mensaje y botones de Game Over
+            gameOver.style.display = "none";
+            buttonsContainer.style.display = "none";
+
+            // Restablecer apariencia del dino
+            dino.classList.remove("dino-estrellado");
+            dino.classList.add("dino-corriendo");
+
+            // Eliminar clases de tiempo
+            contenedor.classList.remove("mediodia", "tarde", "noche");
+
+            // Eliminar obstáculos y nubes
+            for (var i = 0; i < obstaculos.length; i++) {
+                obstaculos[i].parentNode.removeChild(obstaculos[i]);
+            }
+            obstaculos = [];
+
+            for (var i = 0; i < nubes.length; i++) {
+                nubes[i].parentNode.removeChild(nubes[i]);
+            }
+            nubes = [];
+
+            // Restablecer posiciones y tiempos
+            dinoPosY = sueloY;
+            velY = 0;
+            sueloX = 0;
+            tiempoHastaObstaculo = 2;
+            tiempoHastaNube = 0.5;
+
+            // Restablecer puntuación
+            textoScore.innerText = "0";
+
+            // Ajustar posición del suelo
+            suelo.style.left = "0px";
+        }
+
+        function GoToHome() {
+            // Redirigir directamente a la página de inicio
+            window.location.href = "index.html";
+        }
+
+        function DetectarColision() {
+            for (var i = 0; i < obstaculos.length; i++) {
+                if (obstaculos[i].posX > dinoPosX + dino.clientWidth) {
+                    //EVADE
+                    break; //al estar en orden, no puede chocar con más
+                } else {
+                    if (IsCollision(dino, obstaculos[i], 10, 30, 15, 20)) {
+                        GameOver();
+                    }
+                }
+            }
+        }
+
+        function IsCollision(a, b, paddingTop, paddingRight, paddingBottom, paddingLeft) {
+            var aRect = a.getBoundingClientRect();
+            var bRect = b.getBoundingClientRect();
+
+            return !(
+                ((aRect.top + aRect.height - paddingBottom) < (bRect.top)) ||
+                (aRect.top + paddingTop > (bRect.top + bRect.height)) ||
+                ((aRect.left + aRect.width - paddingRight) < bRect.left) ||
+                (aRect.left + paddingLeft > (bRect.left + bRect.width))
+            );
+        }
+
+    </script>
+
+    <script>
+        // Elimina la función initTouchControls completamente y reemplázala con este código
+
+        // Agregar estos eventos al final de la función Start()
+        // Agregar controles táctiles para dispositivos móviles
+        document.addEventListener('touchstart', handleTouchStart, { passive: true });
+
+        // Función para manejar toques en pantalla
+        function handleTouchStart(event) {
+            // Solo saltar si no estamos tocando los botones
+            if (!event.target.closest('.button') && !event.target.closest('.buttons-container')) {
+                Saltar();
+            }
+        }
+
+        // Configurar los botones con eventos táctiles explícitos (agregar al final de Start())
+        restartButton.addEventListener('touchstart', function (e) {
+            e.stopPropagation();
+        }, { passive: true });
+
+        restartButton.addEventListener('touchend', function (e) {
+            e.preventDefault();
+            RestartGame();
+        }, { passive: false });
+
+        homeButton.addEventListener('touchstart', function (e) {
+            e.stopPropagation();
+        }, { passive: true });
+
+        homeButton.addEventListener('touchend', function (e) {
+            e.preventDefault();
+            GoToHome();
+        }, { passive: false });
+    </script>
+
+    <script>
+        document.getElementById('home-button').addEventListener('click', function () {
+            window.location.href = 'index.html';  // Redirige a la página index.html
+        });
+    </script>
+</body>
+
+</html>

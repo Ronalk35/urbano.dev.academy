@@ -1,0 +1,617 @@
+/**
+ * SQL Server - Demostración Completa
+ * Script para crear base de datos, tablas y ejemplos de consultas
+ */
+
+-- Creación de la Base de Datos
+USE master;
+GO
+
+-- Eliminar la base de datos si ya existe
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'EmpresaDemo')
+BEGIN
+    ALTER DATABASE EmpresaDemo SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE EmpresaDemo;
+END
+GO
+
+-- Crear la base de datos
+CREATE DATABASE EmpresaDemo;
+GO
+
+USE EmpresaDemo;
+GO
+
+-- Creación de Tablas
+------------------------------------------------------
+
+-- Tabla Departamentos
+CREATE TABLE departamentos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre_departamento VARCHAR(50) NOT NULL,
+    ubicacion VARCHAR(50),
+    presupuesto DECIMAL(15, 2)
+);
+GO
+
+-- Tabla Cargos
+CREATE TABLE cargos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre_cargo VARCHAR(50) NOT NULL,
+    salario_base DECIMAL(10, 2)
+);
+GO
+
+-- Tabla Empleados
+CREATE TABLE empleados (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    telefono VARCHAR(20),
+    fecha_contratacion DATE,
+    id_departamento INT FOREIGN KEY REFERENCES departamentos(id),
+    id_cargo INT FOREIGN KEY REFERENCES cargos(id),
+    salario DECIMAL(10, 2),
+    fecha_nacimiento DATE,
+    ciudad VARCHAR(50)
+);
+GO
+
+-- Tabla Clientes
+CREATE TABLE clientes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    telefono VARCHAR(20),
+    ciudad VARCHAR(50),
+    pais VARCHAR(50),
+    fecha_registro DATE,
+    edad INT
+);
+GO
+
+-- Tabla Productos
+CREATE TABLE productos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre_producto VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio DECIMAL(10, 2),
+    stock INT,
+    categoria VARCHAR(50)
+);
+GO
+
+-- Tabla Inventario
+CREATE TABLE inventario (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_producto INT FOREIGN KEY REFERENCES productos(id),
+    producto VARCHAR(100),
+    cantidad INT,
+    ubicacion VARCHAR(50),
+    fecha_actualizacion DATE
+);
+GO
+
+-- Tabla Ordenes
+CREATE TABLE ordenes (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    numero_orden VARCHAR(20) UNIQUE,
+    id_cliente INT FOREIGN KEY REFERENCES clientes(id),
+    fecha_orden DATE,
+    total DECIMAL(10, 2),
+    estado VARCHAR(20)
+);
+GO
+
+-- Tabla Detalles de Orden
+CREATE TABLE detalles_orden (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_orden INT FOREIGN KEY REFERENCES ordenes(id),
+    id_producto INT FOREIGN KEY REFERENCES productos(id),
+    cantidad INT,
+    precio_unitario DECIMAL(10, 2),
+    descuento DECIMAL(5, 2)
+);
+GO
+
+-- Inserción de Datos de Ejemplo
+------------------------------------------------------
+
+-- Departamentos
+INSERT INTO departamentos (nombre_departamento, ubicacion, presupuesto) VALUES
+('Ventas', 'Piso 1', 500000.00),
+('Marketing', 'Piso 2', 300000.00),
+('Recursos Humanos', 'Piso 3', 200000.00),
+('Finanzas', 'Piso 4', 400000.00),
+('Tecnología', 'Piso 5', 600000.00),
+('Operaciones', 'Piso 1', 350000.00);
+GO
+
+-- Cargos
+INSERT INTO cargos (nombre_cargo, salario_base) VALUES
+('Gerente', 8000.00),
+('Supervisor', 5000.00),
+('Analista', 3500.00),
+('Asistente', 2500.00),
+('Especialista', 4000.00),
+('Director', 10000.00);
+GO
+
+-- Empleados
+INSERT INTO empleados (nombre, apellido, email, telefono, fecha_contratacion, id_departamento, id_cargo, salario, fecha_nacimiento, ciudad) VALUES
+('Juan', 'Pérez', 'juan.perez@empresa.com', '987654321', '2020-01-15', 1, 1, 8500.00, '1985-05-10', 'Lima'),
+('María', 'González', 'maria.gonzalez@empresa.com', '987654322', '2019-03-22', 2, 2, 5200.00, '1990-02-18', 'Arequipa'),
+('Carlos', 'Ramírez', 'carlos.ramirez@empresa.com', '987654323', '2021-06-05', 1, 3, 3800.00, '1992-11-30', 'Lima'),
+('Ana', 'Torres', 'ana.torres@empresa.com', '987654324', '2018-09-10', 3, 4, 2600.00, '1988-07-25', 'Trujillo'),
+('Pedro', 'Díaz', 'pedro.diaz@empresa.com', '987654325', '2020-11-20', 5, 5, 4300.00, '1987-04-12', 'Lima'),
+('Lucía', 'Martínez', 'lucia.martinez@empresa.com', '987654326', '2017-05-30', 4, 6, 10500.00, '1980-12-05', 'Arequipa'),
+('Roberto', 'Flores', 'roberto.flores@empresa.com', '987654327', '2022-02-15', 1, 3, 3700.00, '1993-08-22', 'Trujillo'),
+('Sofía', 'Vargas', 'sofia.vargas@empresa.com', '987654328', '2019-07-18', 2, 5, 4100.00, '1991-01-14', 'Lima'),
+('Miguel', 'Castro', 'miguel.castro@empresa.com', '987654329', '2021-09-25', 5, 2, 5100.00, '1989-06-28', 'Arequipa'),
+('Carmen', 'Reyes', 'carmen.reyes@empresa.com', '987654330', '2018-04-12', 3, 4, 2700.00, '1994-03-17', 'Lima');
+GO
+
+-- Clientes
+INSERT INTO clientes (nombre, apellido, email, telefono, ciudad, pais, fecha_registro, edad) VALUES
+('Alberto', 'Sánchez', 'alberto.sanchez@mail.com', '123456789', 'Lima', 'Perú', '2019-01-10', 35),
+('Claudia', 'Gómez', 'claudia.gomez@mail.com', '123456790', 'Arequipa', 'Perú', '2020-03-15', 28),
+('Fernando', 'López', 'fernando.lopez@mail.com', '123456791', 'Trujillo', 'Perú', '2019-05-20', 42),
+('Gabriela', 'Rojas', 'gabriela.rojas@mail.com', '123456792', 'Lima', 'Perú', '2021-07-25', 31),
+('Héctor', 'Morales', 'hector.morales@mail.com', '123456793', 'Arequipa', 'Perú', '2020-09-30', 45),
+('Isabel', 'Paredes', 'isabel.paredes@mail.com', '123456794', 'Trujillo', 'Perú', '2019-11-05', 29),
+('Jorge', 'Herrera', 'jorge.herrera@mail.com', '123456795', 'Lima', 'Perú', '2021-01-10', 38),
+('Karla', 'Mendoza', 'karla.mendoza@mail.com', '123456796', 'Arequipa', 'Perú', '2020-03-15', 33);
+GO
+
+-- Productos
+INSERT INTO productos (nombre_producto, descripcion, precio, stock, categoria) VALUES
+('Laptop Pro', 'Laptop de alta gama para profesionales', 2500.00, 50, 'Electrónicos'),
+('Smartphone X', 'Teléfono inteligente de última generación', 1200.00, 100, 'Electrónicos'),
+('Monitor 27"', 'Monitor de alta resolución', 450.00, 30, 'Electrónicos'),
+('Teclado Ergonómico', 'Teclado diseñado para reducir fatiga', 120.00, 80, 'Accesorios'),
+('Mouse Inalámbrico', 'Mouse con tecnología bluetooth', 60.00, 150, 'Accesorios'),
+('Impresora Multifuncional', 'Impresora, escáner y copiadora', 350.00, 25, 'Electrónicos'),
+('Disco Duro Externo', 'Almacenamiento portátil de 1TB', 180.00, 40, 'Almacenamiento'),
+('Auriculares Bluetooth', 'Auriculares con cancelación de ruido', 200.00, 60, 'Accesorios');
+GO
+
+-- Inventario
+INSERT INTO inventario (id_producto, producto, cantidad, ubicacion, fecha_actualizacion) VALUES
+(1, 'Laptop Pro', 50, 'Almacén A', '2023-01-05'),
+(2, 'Smartphone X', 100, 'Almacén B', '2023-01-05'),
+(3, 'Monitor 27"', 30, 'Almacén A', '2023-01-05'),
+(4, 'Teclado Ergonómico', 80, 'Almacén C', '2023-01-05'),
+(5, 'Mouse Inalámbrico', 150, 'Almacén C', '2023-01-05'),
+(6, 'Impresora Multifuncional', 25, 'Almacén B', '2023-01-05'),
+(7, 'Disco Duro Externo', 40, 'Almacén A', '2023-01-05'),
+(8, 'Auriculares Bluetooth', 60, 'Almacén C', '2023-01-05');
+GO
+
+-- Ordenes
+INSERT INTO ordenes (numero_orden, id_cliente, fecha_orden, total, estado) VALUES
+('ORD-001', 1, '2023-01-10', 2500.00, 'Completada'),
+('ORD-002', 2, '2023-01-15', 1260.00, 'Completada'),
+('ORD-003', 3, '2023-01-20', 450.00, 'En proceso'),
+('ORD-004', 4, '2023-01-25', 180.00, 'Completada'),
+('ORD-005', 5, '2023-01-30', 550.00, 'En proceso'),
+('ORD-006', 6, '2023-02-05', 2680.00, 'Completada'),
+('ORD-007', 7, '2023-02-10', 260.00, 'En proceso'),
+('ORD-008', 8, '2023-02-15', 350.00, 'Completada');
+GO
+
+-- Detalles de Orden
+INSERT INTO detalles_orden (id_orden, id_producto, cantidad, precio_unitario, descuento) VALUES
+(1, 1, 1, 2500.00, 0.00),
+(2, 2, 1, 1200.00, 0.00),
+(2, 5, 1, 60.00, 0.00),
+(3, 3, 1, 450.00, 0.00),
+(4, 7, 1, 180.00, 0.00),
+(5, 4, 1, 120.00, 0.00),
+(5, 5, 1, 60.00, 0.00),
+(5, 8, 1, 200.00, 0.00),
+(6, 1, 1, 2500.00, 0.00),
+(6, 5, 3, 60.00, 0.00),
+(7, 4, 1, 120.00, 0.00),
+(7, 5, 1, 60.00, 0.00),
+(7, 8, 1, 200.00, 20.00),
+(8, 6, 1, 350.00, 0.00);
+GO
+
+-- CONSULTAS DE DEMOSTRACIÓN
+------------------------------------------------------
+
+-- Consultas Básicas
+------------------------------------------------------
+-- Selección de columnas específicas
+SELECT nombre, apellido FROM empleados;
+
+-- Seleccionar todas las columnas
+SELECT * FROM clientes;
+
+-- Seleccionar con alias
+SELECT 
+    nombre AS nombre_cliente, 
+    edad AS edad_cliente 
+FROM clientes;
+
+-- Ordenamiento
+------------------------------------------------------
+-- Ordenamiento simple
+SELECT 
+    nombre, 
+    edad 
+FROM clientes 
+ORDER BY edad DESC;
+
+-- Ordenamiento múltiple
+SELECT 
+    nombre, 
+    id_departamento AS departamento, 
+    salario 
+FROM empleados 
+ORDER BY id_departamento ASC, salario DESC;
+
+-- Consultas Condicionales
+------------------------------------------------------
+-- Filtrado con múltiples condiciones
+SELECT 
+    nombre, 
+    salario 
+FROM empleados 
+WHERE salario > 3000 AND id_departamento = 1;
+
+-- Rango de valores
+SELECT 
+    producto 
+FROM inventario 
+WHERE cantidad BETWEEN 10 AND 50;
+
+-- Lista de valores
+SELECT 
+    nombre 
+FROM clientes 
+WHERE ciudad IN ('Lima', 'Arequipa', 'Trujillo');
+
+-- Funciones Agregadas
+------------------------------------------------------
+-- Funciones de agregación básicas
+SELECT 
+    COUNT(*) AS total_empleados, 
+    AVG(salario) AS promedio_salario, 
+    MAX(salario) AS salario_maximo, 
+    MIN(salario) AS salario_minimo, 
+    SUM(salario) AS suma_salarios 
+FROM empleados;
+
+-- Agrupamiento
+------------------------------------------------------
+-- GROUP BY simple
+SELECT 
+    id_departamento AS departamento, 
+    COUNT(*) AS numero_empleados, 
+    AVG(salario) AS salario_promedio 
+FROM empleados 
+GROUP BY id_departamento;
+
+-- Agrupamiento con ROLLUP
+SELECT 
+    id_departamento AS departamento, 
+    id_cargo AS cargo, 
+    SUM(salario) AS suma_salarios
+FROM empleados 
+GROUP BY ROLLUP(id_departamento, id_cargo);
+
+-- Agrupamiento con CUBE
+SELECT 
+    id_departamento AS departamento, 
+    id_cargo AS cargo, 
+    SUM(salario) AS suma_salarios
+FROM empleados 
+GROUP BY CUBE(id_departamento, id_cargo);
+
+
+-- Filtrado de grupos con HAVING
+SELECT 
+    id_departamento AS departamento, 
+    AVG(salario) AS promedio 
+FROM empleados 
+GROUP BY id_departamento 
+HAVING AVG(salario) > 5000;
+
+-- Joins
+------------------------------------------------------
+-- INNER JOIN
+SELECT 
+    e.nombre, 
+    d.nombre_departamento 
+FROM empleados e 
+INNER JOIN departamentos d ON e.id_departamento = d.id;
+
+-- LEFT JOIN
+SELECT 
+    c.nombre, 
+    o.numero_orden 
+FROM clientes c 
+LEFT JOIN ordenes o ON c.id = o.id_cliente;
+
+-- RIGHT JOIN
+SELECT 
+    p.nombre_producto, 
+    o.cantidad 
+FROM detalles_orden o 
+RIGHT JOIN productos p ON o.id_producto = p.id;
+
+-- CROSS JOIN
+SELECT 
+    e.nombre, 
+    d.nombre_departamento 
+FROM empleados e 
+CROSS JOIN departamentos d;
+
+-- FULL JOIN
+SELECT 
+    e.nombre, 
+    d.nombre_departamento 
+FROM empleados e 
+FULL JOIN departamentos d ON e.id_departamento = d.id;
+
+-- Operaciones de Conjunto
+------------------------------------------------------
+-- UNION
+SELECT 
+    nombre, 
+    'Cliente' AS tipo 
+FROM clientes 
+UNION 
+SELECT 
+    nombre, 
+    'Empleado' AS tipo 
+FROM empleados 
+ORDER BY nombre;
+
+-- Consultas Avanzadas
+------------------------------------------------------
+-- Subconsultas
+SELECT 
+    nombre, 
+    salario 
+FROM empleados 
+WHERE salario > (SELECT AVG(salario) FROM empleados);
+
+-- Consultas con EXISTS
+SELECT 
+    c.nombre, 
+    c.apellido 
+FROM clientes c 
+WHERE EXISTS (
+    SELECT 1 
+    FROM ordenes o 
+    WHERE o.id_cliente = c.id AND o.estado = 'Completada'
+);
+
+-- Common Table Expressions (CTE)
+WITH EmpleadosConSalarioAlto AS (
+    SELECT 
+        id, 
+        nombre, 
+        salario 
+    FROM empleados 
+    WHERE salario > 5000
+)
+SELECT 
+    e.nombre, 
+    e.salario, 
+    d.nombre_departamento 
+FROM EmpleadosConSalarioAlto e
+JOIN departamentos d ON e.id_departamento = d.id;
+
+-- Consultas de Ventana (Window Functions)
+------------------------------------------------------
+-- ROW_NUMBER
+SELECT 
+    nombre, 
+    id_departamento, 
+    salario,
+    ROW_NUMBER() OVER(PARTITION BY id_departamento ORDER BY salario DESC) AS ranking
+FROM empleados;
+
+-- RANK y DENSE_RANK
+SELECT 
+    nombre, 
+    id_departamento, 
+    salario,
+    RANK() OVER(PARTITION BY id_departamento ORDER BY salario DESC) AS rank_salario,
+    DENSE_RANK() OVER(PARTITION BY id_departamento ORDER BY salario DESC) AS dense_rank_salario
+FROM empleados;
+
+-- LEAD y LAG
+SELECT 
+    nombre, 
+    id_departamento, 
+    salario,
+    LAG(salario) OVER(PARTITION BY id_departamento ORDER BY salario) AS salario_anterior,
+    LEAD(salario) OVER(PARTITION BY id_departamento ORDER BY salario) AS salario_siguiente
+FROM empleados;
+
+-- Consultas Dinámicas
+------------------------------------------------------
+-- Ejemplo de PIVOT
+DECLARE @query NVARCHAR(MAX);
+SET @query = N'
+SELECT *
+FROM (
+    SELECT 
+        id_departamento, 
+        id_cargo, 
+        salario
+    FROM empleados
+) AS SourceTable
+PIVOT (
+    AVG(salario)
+    FOR id_cargo IN ([1], [2], [3], [4], [5], [6])
+) AS PivotTable;
+';
+EXEC sp_executesql @query;
+
+-- Procedimientos Almacenados
+------------------------------------------------------
+-- Procedimiento para obtener empleados por departamento
+CREATE OR ALTER PROCEDURE sp_ObtenerEmpleadosPorDepartamento
+    @departamento_id INT
+AS
+BEGIN
+    SELECT 
+        e.id, 
+        e.nombre, 
+        e.apellido, 
+        e.salario,
+        c.nombre_cargo,
+        d.nombre_departamento
+    FROM empleados e
+    JOIN departamentos d ON e.id_departamento = d.id
+    JOIN cargos c ON e.id_cargo = c.id
+    WHERE e.id_departamento = @departamento_id
+    ORDER BY e.salario DESC;
+END;
+GO
+
+-- Ejecución del procedimiento
+EXEC sp_ObtenerEmpleadosPorDepartamento @departamento_id = 1;
+
+-- Funciones Definidas por el Usuario
+------------------------------------------------------
+-- Función para calcular el total de ventas por cliente
+CREATE OR ALTER FUNCTION fn_TotalVentasPorCliente (
+    @cliente_id INT
+)
+RETURNS DECIMAL(10, 2)
+AS
+BEGIN
+    DECLARE @total DECIMAL(10, 2);
+    
+    SELECT @total = SUM(total)
+    FROM ordenes
+    WHERE id_cliente = @cliente_id;
+    
+    RETURN ISNULL(@total, 0);
+END;
+GO
+
+-- Uso de la función
+SELECT 
+    c.nombre,
+    c.apellido,
+    dbo.fn_TotalVentasPorCliente(c.id) AS total_ventas
+FROM clientes c
+ORDER BY total_ventas DESC;
+
+-- Vistas
+------------------------------------------------------
+-- Vista para información de empleados completa
+CREATE OR ALTER VIEW vw_InformacionEmpleados
+AS
+SELECT 
+    e.id,
+    e.nombre + ' ' + e.apellido AS nombre_completo,
+    e.email,
+    e.telefono,
+    e.fecha_contratacion,
+    d.nombre_departamento,
+    c.nombre_cargo,
+    e.salario,
+    DATEDIFF(YEAR, e.fecha_nacimiento, GETDATE()) AS edad,
+    e.ciudad
+FROM empleados e
+JOIN departamentos d ON e.id_departamento = d.id
+JOIN cargos c ON e.id_cargo = c.id;
+GO
+
+-- Consulta a la vista
+SELECT * FROM vw_InformacionEmpleados;
+
+-- Triggers
+------------------------------------------------------
+-- Trigger para auditar cambios en salarios
+CREATE TABLE auditoria_salarios (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    empleado_id INT,
+    salario_anterior DECIMAL(10, 2),
+    salario_nuevo DECIMAL(10, 2),
+    fecha_cambio DATETIME,
+    usuario VARCHAR(50)
+);
+GO
+
+CREATE OR ALTER TRIGGER tr_AuditoriaSalarios
+ON empleados
+AFTER UPDATE
+AS
+BEGIN
+    IF UPDATE(salario)
+    BEGIN
+        INSERT INTO auditoria_salarios (
+            empleado_id,
+            salario_anterior,
+            salario_nuevo,
+            fecha_cambio,
+            usuario
+        )
+        SELECT 
+            i.id,
+            d.salario,
+            i.salario,
+            GETDATE(),
+            SYSTEM_USER
+        FROM inserted i
+        JOIN deleted d ON i.id = d.id
+        WHERE i.salario <> d.salario;
+    END
+END;
+GO
+
+-- Ejemplo de actualización para activar el trigger
+UPDATE empleados 
+SET salario = salario * 1.05 
+WHERE id_departamento = 1;
+
+-- Consulta a la tabla de auditoría
+SELECT * FROM auditoria_salarios;
+
+-- Índices
+------------------------------------------------------
+-- Creación de índices para mejorar rendimiento
+CREATE INDEX IX_Empleados_Departamento ON empleados(id_departamento);
+CREATE INDEX IX_Empleados_Cargo ON empleados(id_cargo);
+CREATE INDEX IX_Ordenes_Cliente ON ordenes(id_cliente);
+CREATE INDEX IX_Ordenes_Estado ON ordenes(estado);
+
+-- Backup y Recuperación
+------------------------------------------------------
+-- Backup de la base de datos
+BACKUP DATABASE EmpresaDemo
+TO DISK = 'C:\Backups\EmpresaDemo.bak'
+WITH FORMAT, MEDIANAME = 'SQLServerBackups', NAME = 'Full Backup of EmpresaDemo';
+
+-- Restauración de la base de datos (para referencia)
+/*
+RESTORE DATABASE EmpresaDemo
+FROM DISK = 'C:\Backups\EmpresaDemo.bak'
+WITH REPLACE, RECOVERY;
+*/
+
+-- Mantenimiento
+------------------------------------------------------
+-- Actualización de estadísticas
+UPDATE STATISTICS empleados;
+UPDATE STATISTICS clientes;
+UPDATE STATISTICS ordenes;
+
+-- Reconstrucción de índices
+ALTER INDEX ALL ON empleados REBUILD;
+ALTER INDEX ALL ON clientes REBUILD;
+ALTER INDEX ALL ON ordenes REBUILD;
+
+-- Mensaje de finalización
+PRINT 'Base de datos de demostración creada y poblada exitosamente.';

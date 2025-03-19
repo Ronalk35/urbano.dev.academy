@@ -1,0 +1,236 @@
+-- Ronald Urbano Chávez
+-- Creamos la base de datos
+CREATE DATABASE Empleados_2024
+GO
+
+USE Empleados_2024
+GO
+
+-- Crear tablas necesarias 4 tablas podemos agregar más...
+
+CREATE TABLE Empleados (
+    EmpleadoID INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre VARCHAR(50) NOT NULL,
+    Email VARCHAR(100),
+    Edad INT CHECK (Edad >= 0),
+    Salario DECIMAL(10,2),
+    FechaNacimiento DATE,
+    Activo BIT DEFAULT 1
+)
+GO
+
+CREATE TABLE Cuentas (
+    ID INT PRIMARY KEY,
+    Saldo DECIMAL(10,2)
+)
+GO
+
+CREATE TABLE Inventario (
+    ProductoID INT PRIMARY KEY,
+    Stock INT,
+    Descripcion VARCHAR(100)
+)
+GO
+
+CREATE TABLE Pedidos (
+    PedidoID INT IDENTITY(1,1) PRIMARY KEY,
+    ProductoID INT,
+    Cantidad INT,
+    FechaPedido DATETIME DEFAULT GETDATE()
+)
+GO
+
+-- Crear procedimiento almacenado para demostrar identificadores y variables
+CREATE PROCEDURE sp_DemoIdentificadoresVariables
+AS
+BEGIN
+    -- Declaración de variables
+    DECLARE @Nombre VARCHAR(50)
+    DECLARE @Edad INT
+    DECLARE @Salario DECIMAL(10,2)
+    DECLARE @FechaNacimiento DATE
+    DECLARE @ID INT, @Descripcion NVARCHAR(100), @Activo BIT
+
+    -- Asignación de valores
+    SET @Nombre = 'Juan Pérez'
+    SELECT @Edad = 25
+    SET @Salario = 30000.00
+
+    -- Asignación múltiple con SELECT
+    SELECT @ID = 1, @Descripcion = 'Empleado Nuevo', @Activo = 1
+
+    -- Insertar datos usando las variables
+    INSERT INTO Empleados (Nombre, Edad, Salario)
+    VALUES (@Nombre, @Edad, @Salario)
+
+    -- Mostrar resultados
+    SELECT * FROM Empleados
+END
+GO
+
+-- Crear procedimiento para demostrar estructuras de control IF
+CREATE PROCEDURE sp_DemoEstructurasControl
+    @EmpleadoID INT
+AS
+BEGIN
+    DECLARE @Edad INT
+    DECLARE @Salario DECIMAL(10,2)
+
+    -- Obtener datos del empleado
+    SELECT @Edad = Edad, @Salario = Salario
+    FROM Empleados
+    WHERE EmpleadoID = @EmpleadoID
+
+    -- Estructura IF
+    IF @Edad >= 18
+    BEGIN
+        PRINT 'Empleado mayor de edad'
+        
+        -- IF anidado
+        IF @Salario >= 30000
+            PRINT 'Salario alto'
+        ELSE
+            PRINT 'Salario estándar'
+    END
+    ELSE
+    BEGIN
+        PRINT 'Empleado menor de edad'
+    END
+
+    -- Estructura CASE
+    SELECT 
+        Nombre,
+        Salario,
+        CASE 
+            WHEN Salario < 30000 THEN 'Bajo'
+            WHEN Salario BETWEEN 30000 AND 50000 THEN 'Medio'
+            ELSE 'Alto'
+        END AS NivelSalarial
+    FROM Empleados
+    WHERE EmpleadoID = @EmpleadoID
+END
+GO
+
+-- Crear procedimiento para demostrar WHILE
+CREATE PROCEDURE sp_DemoWhile
+    @NumIteraciones INT
+AS
+BEGIN
+    DECLARE @Contador INT = 1
+    
+    WHILE @Contador <= @NumIteraciones
+    BEGIN
+        INSERT INTO Empleados (Nombre, Edad, Salario)
+        VALUES (
+            'Empleado' + CAST(@Contador AS VARCHAR),
+            20 + (@Contador % 30), -- Edad entre 20 y 49
+            25000 + (@Contador * 1000) -- Salario incremental
+        )
+        
+        SET @Contador = @Contador + 1
+        
+        -- Ejemplo de BREAK
+        IF @Contador > 10
+            BREAK
+    END
+END
+GO
+
+-- Crear procedimiento para demostrar TRY/CATCH y @@ERROR
+CREATE PROCEDURE sp_DemoErrores
+    @Edad INT
+AS
+BEGIN
+    BEGIN TRY
+        -- Intentar insertar un registro
+        INSERT INTO Empleados (Nombre, Edad, Salario)
+        VALUES ('Test Error', @Edad, 25000)
+
+        -- Verificar @@ERROR
+        IF @@ERROR <> 0
+            THROW 51000, 'Error en la inserción', 1
+
+    END TRY
+    BEGIN CATCH
+        SELECT 
+            ERROR_NUMBER() AS NumeroError,
+            ERROR_MESSAGE() AS MensajeError,
+            ERROR_SEVERITY() AS SeveridadError,
+            ERROR_STATE() AS EstadoError,
+            ERROR_LINE() AS LineaError,
+            ERROR_PROCEDURE() AS ProcedimientoError
+
+        -- Uso de RAISERROR
+        RAISERROR('Error procesando empleado con edad: %d', 16, 1, @Edad)
+    END CATCH
+END
+GO
+
+-- Crear procedimiento para demostrar transacciones
+CREATE PROCEDURE sp_DemoTransacciones
+    @CuentaID INT,
+    @Monto DECIMAL(10,2)
+AS
+BEGIN
+    BEGIN TRANSACTION
+
+    BEGIN TRY
+        -- Verificar si existe la cuenta
+        IF NOT EXISTS (SELECT 1 FROM Cuentas WHERE ID = @CuentaID)
+        BEGIN
+            INSERT INTO Cuentas (ID, Saldo) VALUES (@CuentaID, 0)
+        END
+
+        -- Actualizar saldo
+        UPDATE Cuentas 
+        SET Saldo = Saldo + @Monto
+        WHERE ID = @CuentaID
+
+        -- Si el saldo resultante es negativo, hacer rollback
+        IF (SELECT Saldo FROM Cuentas WHERE ID = @CuentaID) < 0
+        BEGIN
+            ROLLBACK TRANSACTION
+            RAISERROR('Saldo insuficiente', 16, 1)
+            RETURN
+        END
+
+        COMMIT TRANSACTION
+        PRINT 'Transacción completada con éxito'
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION
+        PRINT 'Error: ' + ERROR_MESSAGE()
+    END CATCH
+END
+GO
+
+-- Insertar algunos datos de prueba
+INSERT INTO Empleados (Nombre, Edad, Salario, Email)
+VALUES 
+    ('Ana García', 28, 35000, 'ana@email.com'),
+    ('Carlos López', 35, 42000, 'carlos@email.com'),
+    ('María Rodríguez', 31, 38000, 'maria@email.com')
+GO
+
+INSERT INTO Inventario (ProductoID, Stock, Descripcion)
+VALUES 
+    (1, 100, 'Producto A'),
+    (2, 150, 'Producto B'),
+    (3, 200, 'Producto C')
+GO
+
+-- Ejemplos de uso de los procedimientos almacenados podemos crear mas...
+EXEC sp_DemoIdentificadoresVariables
+GO
+
+EXEC sp_DemoEstructurasControl @EmpleadoID = 1
+GO
+
+EXEC sp_DemoWhile @NumIteraciones = 5
+GO
+
+EXEC sp_DemoErrores @Edad = -5
+GO
+
+EXEC sp_DemoTransacciones @CuentaID = 1, @Monto = 1000
+GO

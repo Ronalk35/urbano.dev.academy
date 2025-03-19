@@ -1,0 +1,273 @@
+-- Ronald Urbano Chávez
+-- Creación de la Base de Datos
+CREATE DATABASE DBCursoresYProcedimientos;
+GO
+
+USE DBCursoresYProcedimientos;
+GO
+
+-- Creación de Tablas
+CREATE TABLE Departamentos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(50) NOT NULL,
+    ubicacion VARCHAR(100)
+);
+
+CREATE TABLE Empleados (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(150),
+    telefono VARCHAR(20),
+    fecha_contratacion DATE,
+    salario DECIMAL(10,2),
+    id_departamento INT,
+    activo BIT DEFAULT 1,
+    FOREIGN KEY (id_departamento) REFERENCES Departamentos(id)
+);
+
+CREATE TABLE Productos (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2),
+    stock_actual INT,
+    punto_reorden INT,
+    categoria VARCHAR(50)
+);
+
+CREATE TABLE Ventas (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    fecha_venta DATE,
+    id_empleado INT,
+    monto_total DECIMAL(10,2),
+    estado VARCHAR(20),
+    FOREIGN KEY (id_empleado) REFERENCES Empleados(id)
+);
+
+CREATE TABLE DetalleVentas (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    id_venta INT,
+    id_producto INT,
+    cantidad INT,
+    precio_unitario DECIMAL(10,2),
+    subtotal DECIMAL(10,2),
+    FOREIGN KEY (id_venta) REFERENCES Ventas(id),
+    FOREIGN KEY (id_producto) REFERENCES Productos(id)
+);
+
+-- Inserción de Datos de Prueba
+INSERT INTO Departamentos (nombre, ubicacion) VALUES
+('IT', 'Piso 3'),
+('Ventas', 'Piso 1'),
+('RRHH', 'Piso 2'),
+('Contabilidad', 'Piso 2'),
+('Marketing', 'Piso 1');
+
+INSERT INTO Empleados (nombre, apellido, email, telefono, fecha_contratacion, salario, id_departamento) VALUES
+('Juan', 'Pérez', 'juan.perez@email.com', '555-0101', '2020-01-15', 3500.00, 1),
+('María', 'García', 'maria.garcia@email.com', '555-0102', '2020-02-20', 2800.00, 2),
+('Carlos', 'López', 'carlos.lopez@email.com', '555-0103', '2020-03-10', 4000.00, 1),
+('Ana', 'Martínez', 'ana.martinez@email.com', '555-0104', '2020-04-05', 3200.00, 3),
+('Pedro', 'Sánchez', 'pedro.sanchez@email.com', '555-0105', '2020-05-12', 2900.00, 2),
+('Laura', 'Rodríguez', 'laura.rodriguez@email.com', '555-0106', '2020-06-15', 3100.00, 4),
+('Miguel', 'Torres', 'miguel.torres@email.com', '555-0107', '2020-07-20', 3300.00, 5),
+('Sofia', 'Ruiz', 'sofia.ruiz@email.com', '555-0108', '2020-08-25', 2750.00, 2),
+('Diego', 'Flores', 'diego.flores@email.com', '555-0109', '2020-09-30', 3800.00, 1),
+('Carmen', 'Gómez', 'carmen.gomez@email.com', '555-0110', '2020-10-05', 3000.00, 3);
+
+INSERT INTO Productos (nombre, descripcion, precio, stock_actual, punto_reorden, categoria) VALUES
+('Laptop Pro', 'Laptop de alta gama', 1200.00, 50, 10, 'Electrónicos'),
+('Mouse Inalámbrico', 'Mouse ergonómico', 25.00, 100, 20, 'Accesorios'),
+('Teclado Mecánico', 'Teclado gaming', 80.00, 30, 5, 'Accesorios'),
+('Monitor 24"', 'Monitor Full HD', 200.00, 40, 8, 'Electrónicos'),
+('Impresora Láser', 'Impresora de alta velocidad', 300.00, 20, 5, 'Electrónicos'),
+('Disco Duro 1TB', 'Almacenamiento externo', 60.00, 80, 15, 'Almacenamiento'),
+('Memoria RAM 8GB', 'Memoria DDR4', 45.00, 60, 12, 'Componentes'),
+('Webcam HD', 'Cámara web 1080p', 40.00, 35, 7, 'Accesorios'),
+('Router WiFi', 'Router de doble banda', 70.00, 25, 5, 'Redes'),
+('Cable HDMI', 'Cable 2m', 15.00, 150, 30, 'Cables');
+
+-- Ejemplo 1: Cursor Implícito para Actualización de Salarios
+CREATE PROCEDURE actualizarSalariosIT
+AS
+BEGIN
+    UPDATE Empleados 
+    SET salario = salario * 1.1 
+    WHERE id_departamento = (SELECT id FROM Departamentos WHERE nombre = 'IT');
+    
+    PRINT 'Registros actualizados: ' + CAST(@@ROWCOUNT AS VARCHAR);
+END;
+GO
+
+-- Ejemplo 2: Cursor Explícito para Procesar Ventas
+CREATE PROCEDURE procesarVentasEmpleado
+    @id_empleado INT
+AS
+BEGIN
+    DECLARE @total_ventas DECIMAL(10,2) = 0;
+    DECLARE @fecha_venta DATE;
+    DECLARE @monto DECIMAL(10,2);
+    
+    DECLARE cursor_ventas CURSOR FOR
+    SELECT fecha_venta, monto_total
+    FROM Ventas
+    WHERE id_empleado = @id_empleado;
+    
+    OPEN cursor_ventas;
+    
+    FETCH NEXT FROM cursor_ventas INTO @fecha_venta, @monto;
+    
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @total_ventas = @total_ventas + @monto;
+        
+        -- Actualizar estado de la venta
+        UPDATE Ventas
+        SET estado = 'Procesado'
+        WHERE fecha_venta = @fecha_venta AND id_empleado = @id_empleado;
+        
+        FETCH NEXT FROM cursor_ventas INTO @fecha_venta, @monto;
+    END;
+    
+    CLOSE cursor_ventas;
+    DEALLOCATE cursor_ventas;
+    
+    -- Actualizar comisión del empleado
+    UPDATE Empleados
+    SET salario = salario + (@total_ventas * 0.02)
+    WHERE id = @id_empleado;
+END;
+GO
+
+-- Ejemplo 3: Procedimiento Almacenado con Parámetros de Entrada y Salida
+CREATE PROCEDURE calcularEstadisticasVentas
+    @fecha_inicio DATE,
+    @fecha_fin DATE,
+    @total_ventas DECIMAL(10,2) OUTPUT,
+    @promedio_venta DECIMAL(10,2) OUTPUT,
+    @max_venta DECIMAL(10,2) OUTPUT
+AS
+BEGIN
+    SELECT 
+        @total_ventas = SUM(monto_total),
+        @promedio_venta = AVG(monto_total),
+        @max_venta = MAX(monto_total)
+    FROM Ventas
+    WHERE fecha_venta BETWEEN @fecha_inicio AND @fecha_fin;
+END;
+GO
+
+-- Ejemplo 4: Procedimiento Almacenado para Gestión de Inventario
+CREATE PROCEDURE actualizarInventario
+    @categoria VARCHAR(50)
+AS
+BEGIN
+    DECLARE @id_producto INT;
+    DECLARE @stock_actual INT;
+    DECLARE @punto_reorden INT;
+    
+    DECLARE cursor_productos CURSOR FOR
+    SELECT id, stock_actual, punto_reorden
+    FROM Productos
+    WHERE categoria = @categoria;
+    
+    OPEN cursor_productos;
+    
+    FETCH NEXT FROM cursor_productos INTO @id_producto, @stock_actual, @punto_reorden;
+    
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        IF @stock_actual < @punto_reorden
+        BEGIN
+            -- Simular generación de orden de compra
+            PRINT 'Generando orden de compra para producto ID: ' + CAST(@id_producto AS VARCHAR);
+            
+            -- Actualizar stock (simulación)
+            UPDATE Productos
+            SET stock_actual = punto_reorden * 2
+            WHERE id = @id_producto;
+        END;
+        
+        FETCH NEXT FROM cursor_productos INTO @id_producto, @stock_actual, @punto_reorden;
+    END;
+    
+    CLOSE cursor_productos;
+    DEALLOCATE cursor_productos;
+END;
+GO
+
+-- Ejemplo 5: Procedimiento Almacenado Anidado
+CREATE PROCEDURE procesarVentaCompleta
+    @id_empleado INT,
+    @id_producto INT,
+    @cantidad INT
+AS
+BEGIN
+    DECLARE @stock_actual INT;
+    DECLARE @precio_unitario DECIMAL(10,2);
+    DECLARE @monto_total DECIMAL(10,2);
+    
+    -- Verificar stock (procedimiento anidado simulado)
+    SELECT @stock_actual = stock_actual, @precio_unitario = precio
+    FROM Productos
+    WHERE id = @id_producto;
+    
+    IF @stock_actual >= @cantidad
+    BEGIN
+        BEGIN TRANSACTION;
+        
+        TRY
+            -- Crear venta
+            SET @monto_total = @precio_unitario * @cantidad;
+            
+            INSERT INTO Ventas (fecha_venta, id_empleado, monto_total, estado)
+            VALUES (GETDATE(), @id_empleado, @monto_total, 'Pendiente');
+            
+            -- Insertar detalle
+            INSERT INTO DetalleVentas (id_venta, id_producto, cantidad, precio_unitario, subtotal)
+            VALUES (SCOPE_IDENTITY(), @id_producto, @cantidad, @precio_unitario, @monto_total);
+            
+            -- Actualizar stock
+            UPDATE Productos
+            SET stock_actual = stock_actual - @cantidad
+            WHERE id = @id_producto;
+            
+            -- Procesar venta (llamada a procedimiento anidado)
+            EXEC procesarVentasEmpleado @id_empleado;
+            
+            COMMIT TRANSACTION;
+        END TRY
+        BEGIN CATCH
+            ROLLBACK TRANSACTION;
+            THROW;
+        END CATCH;
+    END;
+    ELSE
+    BEGIN
+        THROW 50001, 'Stock insuficiente', 1;
+    END;
+END;
+GO
+
+-- Ejemplo de uso de los procedimientos
+-- 1. Actualizar salarios IT
+EXEC actualizarSalariosIT;
+
+-- 2. Procesar ventas de un empleado
+EXEC procesarVentasEmpleado @id_empleado = 1;
+
+-- 3. Calcular estadísticas de ventas
+DECLARE @total DECIMAL(10,2), @promedio DECIMAL(10,2), @maximo DECIMAL(10,2);
+EXEC calcularEstadisticasVentas 
+    @fecha_inicio = '2023-01-01',
+    @fecha_fin = '2023-12-31',
+    @total_ventas = @total OUTPUT,
+    @promedio_venta = @promedio OUTPUT,
+    @max_venta = @maximo OUTPUT;
+
+-- 4. Actualizar inventario
+EXEC actualizarInventario @categoria = 'Electrónicos';
+
+-- 5. Procesar venta completa
+EXEC procesarVentaCompleta @id_empleado = 1, @id_producto = 1, @cantidad = 2;

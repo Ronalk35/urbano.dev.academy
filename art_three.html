@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Etiquetas meta para SEO -->
+    <meta name="description"
+        content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas. Tutoriales, guías y mejores prácticas para desarrolladores por Urbano.Dev Academy." />
+    <meta name="keywords"
+        content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+    <meta name="author" content="Urbano.Dev Academy" />
+
+    <!-- Open Graph para compartir en redes sociales -->
+    <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+    <meta property="og:description"
+        content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+    <meta property="og:image" content="https://tudominio.com/assets/img/logo.png" />
+    <meta property="og:url" content="https://tudominio.com/blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Urbano.Dev Academy" />
+    <title>Cursores y Procedimientos Almacenados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+    <script src="/assets/js/includes.js" defer></script>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .Section {
+            padding: 2rem 0;
+        }
+        section.mb-8 a {
+            color: #38bdf8; /* Cambia el color de los enlaces aquí */
+            text-decoration: none;
+        }
+        section.mb-8 a:hover {
+    color: #059669; /* Cambia el color de los enlaces cuando el ratón pasa sobre ellos */
+}
+
+        .Container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .Title {
+            font-size: 2.5rem;
+            margin: 1.5rem 0;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            color: #93c5fd;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+        }
+
+        .Container ul {
+            background-color: #1e293b;
+            padding: 1.2rem 1.2rem 1.2rem 2.5rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .Container li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .Container li::before {
+            content: '';
+            color: #38bdf8;
+            font-weight: bold;
+            position: absolute;
+            left: -1.2rem;
+        }
+
+        .sql-block {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sql-code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .keyword {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .number {
+            color: #fda4af;
+        }
+
+        .function {
+            color: #c4b5fd;
+        }
+
+        button {
+            background: #0ea5e9;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            right: 0.8rem;
+            top: 0.8rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        button:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #f43f5e;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-back:hover {
+            background: #e11d48;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-back::before {
+            content: "←";
+            font-weight: bold;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0.8rem 1.5rem;
+            background: #10b981;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-download::before {
+            content: "↓";
+            font-weight: bold;
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0 2rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .article-meta i {
+            color: #38bdf8;
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .Container {
+                width: 95%;
+                padding: 0.8rem;
+            }
+
+            .Title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.2rem;
+            }
+
+            .sql-block {
+                padding: 1rem;
+                margin: 1.2rem 0;
+            }
+
+            .sql-code {
+                font-size: 0.85rem;
+            }
+
+            button {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .article-meta {
+                flex-wrap: wrap;
+                gap: 0.8rem;
+            }
+            
+        }
+
+        @media (max-width: 480px) {
+            .Title {
+                font-size: 1.6rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p,
+            li {
+                font-size: 0.95rem;
+            }
+
+            .sql-code {
+                font-size: 0.8rem;
+            }
+
+            .btn-back {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+                margin: 0.8rem 0 1.5rem;
+            }
+            .btn-download {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="art_three">
+    <!-- Menú de navegación y cabecera -->
+    <div data-include="nav.html"></div>
+
+    <!-- Contenido principal del artículo -->
+    <main class="Container mx-auto px-4 py-8 article-content">
+        <h1 class="Title">Cursores y Procedimientos Almacenados</h1>
+        <div class="article-meta">
+            <span><i class="far fa-calendar"></i> Actualizado: Marzo 2025</span>
+            <span><i class="far fa-clock"></i> Tiempo de lectura: 8 min</span>
+            <span><i class="far fa-user"></i> Por: Ronald Urbano Chávez</span>
+        </div>
+        
+        <h2 class="text-2xl font-semibold mb-4">Introducción</h2>
+        <div class="mb-8">
+            <p class="text-lg mb-4">
+                En el mundo de las bases de datos relacionales, la manipulación y procesamiento eficiente 
+                de conjuntos de datos es fundamental. Dos herramientas esenciales que todo desarrollador y 
+                administrador de bases de datos debe dominar son los cursores y los procedimientos almacenados. 
+                En este artículo, exploraremos en detalle estos conceptos, sus aplicaciones prácticas y las mejores 
+                prácticas para su implementación.
+            </p>
+        </div>
+        
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Cursores: Navegando por los Datos</h2>
+            <h3 class="text-xl font-semibold mb-3">¿Qué es un Cursor?</h3>
+            <p>
+                Un cursor es un mecanismo que permite procesar fila por fila los resultados de una consulta SQL. 
+                Actúa como un puntero que se mueve a través de los registros, permitiendo realizar operaciones 
+                específicas en cada fila. Esta capacidad es especialmente útil cuando necesitamos procesar grandes 
+                conjuntos de datos de manera controlada y sistemática.
+            </p>
+
+            <h2 class="text-2xl font-semibold mb-4">Tipos de Cursores</h2>
+            <h3 class="text-xl font-semibold mb-3">1. Cursores Implícitos</h3>
+            <p>
+                Los cursores implícitos son creados y gestionados automáticamente por el motor de base de 
+                datos cuando se ejecutan sentencias SQL. Algunas características importantes:
+            </p>
+            <ul class="list-disc pl-5">
+                <li>Se crean automáticamente para operaciones DML (INSERT, UPDATE, DELETE)</li>
+                <li>No requieren declaración explícita</li>
+                <li>El motor de base de datos maneja su ciclo de vida</li>
+                <li>Son ideales para operaciones simples y directas</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold mb-3">Ejemplo de cursor implícito:</h3>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Cursor implícito</span>
+BEGIN
+    UPDATE empleados 
+    SET salario = salario * 1.1 
+    WHERE departamento = 'IT';
+            
+    IF SQL%FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Registros actualizados: ' || SQL%ROWCOUNT);
+    END IF;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">2. Cursores Explícitos</h3>
+            <p>Los cursores explícitos son declarados y controlados por el programador, 
+                ofreciendo mayor flexibilidad y control. Características principales:
+            </p>
+            <ul class="list-disc pl-5">
+                <li>Requieren declaración explícita</li>
+                <li>Permiten mayor control sobre el procesamiento de datos</li>
+                <li>Son ideales para operaciones complejas</li>
+                <li>Ofrecen más atributos y funcionalidades</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold mb-3">Ejemplo de cursor explícito:</h3>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Ejemplo</span>
+DECLARE
+    CURSOR c_empleados IS
+        SELECT id, nombre, salario
+        FROM empleados
+        WHERE departamento = 'Ventas';
+            
+    v_id empleados.id%TYPE;
+    v_nombre empleados.nombre%TYPE;
+    v_salario empleados.salario%TYPE;
+BEGIN
+    OPEN c_empleados;
+    LOOP
+        FETCH c_empleados INTO v_id, v_nombre, v_salario;
+        EXIT WHEN c_empleados%NOTFOUND;
+                
+        -- Procesamiento de cada registro
+        IF v_salario < 3000 THEN
+            UPDATE empleados 
+            SET salario = v_salario * 1.15 
+            WHERE id = v_id;
+        END IF;
+    END LOOP;
+    CLOSE c_empleados;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Cursores y Actualización de Datos</h2>
+            <p>Los cursores son particularmente útiles cuando necesitamos realizar actualizaciones complejas basadas en lógica condicional. 
+                Algunas consideraciones importantes:
+            </p>
+            <h3 class="text-xl font-semibold mb-3">1. Bloqueo de Registros</h3>
+            <ul class="list-disc pl-5">
+                <li>Es importante considerar el nivel de bloqueo al actualizar datos</li>
+                <li>Usar la cláusula FOR UPDATE cuando sea necesario</li>
+                <li>Gestionar adecuadamente las transacciones</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-3">2. Rendimiento</h3>
+            <ul class="list-disc pl-5">
+                <li>Los cursores consumen recursos del sistema</li>
+                <li>Evaluar alternativas como operaciones SET-based</li>
+                <li>Optimizar las consultas dentro del cursor</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-3">3. Mejores Prácticas</h3>
+            <ul class="list-disc pl-5">
+                <li>Cerrar siempre los cursores después de usarlos</li>
+                <li>Utilizar parámetros cuando sea posible</li>
+                <li>Manejar excepciones adecuadamente</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">Definición y Beneficios</h3>
+            <p>
+                Los procedimientos almacenados son conjuntos de instrucciones SQL precompiladas que se 
+                almacenan en la base de datos. Ofrecen numerosas ventajas:
+            </p>
+            <ul class="list-disc pl-5">
+                <li>Mejor rendimiento</li>
+                <li>Reutilización de código</li>
+                <li>Mayor seguridad</li>
+                <li>Reducción del tráfico de red</li>
+                <li>Mantenimiento centralizado</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-3">Estructura Básica</h3>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Estructura
+ver modelo
+                </span>
+CREATE PROCEDURE nombre_procedimiento
+    (
+    parametro1 tipo_dato,
+    parametro2 tipo_dato
+    )
+AS
+BEGIN
+    -- Declaraciones
+    -- Lógica del procedimiento
+    -- Manejo de errores
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">Integración con Cursores</h3>
+            <p>Los procedimientos almacenados pueden incorporar cursores para realizar operaciones complejas:</p>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Asignación</span>
+CREATE PROCEDURE actualizar_salarios_departamento
+    (
+    p_departamento VARCHAR2(50),
+    p_incremento NUMBER
+    )
+AS
+    CURSOR c_empleados IS
+        SELECT id, salario
+        FROM empleados
+        WHERE departamento = p_departamento
+        FOR UPDATE;
+BEGIN
+    OPEN c_empleados;
+    LOOP
+        FETCH c_empleados INTO v_id, v_nombre, v_salario;
+        EXIT WHEN c_empleados%NOTFOUND;
+                
+        -- Procesamiento de cada registro
+        IF v_salario < 3000 THEN
+            UPDATE empleados 
+            SET salario = v_salario * 1.15 
+            WHERE id = v_id;
+        END IF;
+    END LOOP;
+    CLOSE c_empleados;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Mejores Prácticas en Procedimientos Almacenados</h2>
+            <h3 class="text-xl font-semibold mb-3">1. Nomenclatura y Documentación</h3>
+            <ul class="list-disc pl-5">
+                <li>Usar nombres descriptivos</li>
+                <li>Documentar parámetros y funcionalidad</li>
+                <li>Mantener un estándar de codificación</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-3">2. Gestión de Errores</h3>
+            <ul class="list-disc pl-5">
+                <li>Implementar manejo de excepciones robusto</li>
+                <li>Logging de errores</li>
+                <li>Rollback en caso de fallos</li>
+            </ul>
+            <h3 class="text-xl font-semibold mb-3">3. Optimización</h3>
+            <ul class="list-disc pl-5">
+                <li>Minimizar el uso de cursores cuando sea posible</li>
+                <li>Optimizar consultas SQL</li>
+                <li>Utilizar índices adecuadamente</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Casos de Uso Prácticos</h2>
+            <h3 class="text-xl font-semibold mb-3">1. Procesamiento de Nómina</h3>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Ejemplo
+1
+                </span>
+CREATE PROCEDURE procesar_nomina
+    (
+    p_mes NUMBER,
+    p_anio NUMBER
+    )
+AS
+    CURSOR c_empleados IS
+    SELECT id, salario_base, horas_extra
+    FROM empleados
+    WHERE activo = 1
+    FOR UPDATE;
+BEGIN
+    FOR r_empleado IN c_empleados LOOP
+        calcular_y_actualizar_salario(
+            r_empleado.id,
+            r_empleado.salario_base,
+            r_empleado.horas_extra,
+            p_mes,
+            p_anio
+        );
+    END LOOP;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+
+            <h3 class="text-xl font-semibold mb-3">2. Actualización Masiva de Inventario</h3>
+            <div class="sql-block">
+                <pre class="sql-code"><span class="comment">-- Ejemplo</span>
+CREATE PROCEDURE actualizar_inventario
+    (
+    p_categoria VARCHAR2
+    )
+AS
+    CURSOR c_productos IS
+        SELECT id, stock_actual, punto_reorden
+        FROM productos
+        WHERE categoria = p_categoria
+        FOR UPDATE;
+BEGIN
+    FOR r_producto IN c_productos LOOP
+        IF r_producto.stock_actual < r_producto.punto_reorden THEN
+            generar_orden_compra(r_producto.id);
+        END IF;
+    END LOOP;
+END;</pre>
+                <button onclick="copyCode(this)">Copiar</button>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Conclusión</h2>
+            <div class="mb-8">
+                <p class="text-lg mb-4">
+                    Los cursores y procedimientos almacenados son herramientas poderosas en el desarrollo de bases de datos. 
+                    Cuando se utilizan correctamente, pueden mejorar significativamente el rendimiento y la mantenibilidad de 
+                    las aplicaciones. Sin embargo, es crucial seguir las mejores prácticas y considerar cuidadosamente cuándo 
+                    y cómo utilizarlos.
+                </p>
+                <p>
+                    La clave está en encontrar el equilibrio adecuado entre el uso de cursores, procedimientos 
+                    almacenados y operaciones SET-based tradicionales, siempre teniendo en cuenta los requisitos específicos 
+                    de cada proyecto y las limitaciones de recursos del sistema.
+                </p>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Recursos Adicionales</h2>
+            <p>
+                Para reforzar los conocimientos presentados en este artículo, te recomiendo visitar los siguientes recursos
+                oficiales donde encontrarás documentación completa y actualizada, que ofrece ejercicios interactivos y
+                contenido técnico avanzado. Adicionalmente, puedes encontrar la base de datos completa 'DBCursoresYProcedimientos' 
+                en el script proporcionado. Dale al botón Recursos; abre el archivo y simplemente cópialo, pégalo 
+                en SQL Server Management Studio y ejecútalo para crear la base de datos con todos los ejemplos y 
+                procedimientos almacenados, permitiéndote practicar cada uno de los conceptos explicados en este artículo.
+            </p>
+            <ul class="list-disc pl-5">
+                <li>
+                    <a
+                        href="https://docs.microsoft.com/es-es/sql/t-sql/language-elements/cursors-transact-sql"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    Microsoft SQL Server Documentation - Cursores
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="https://www.w3schools.com/sql/sql_stored_procedures.asp"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    W3Schools SQL Server Stored Procedures
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="https://www.sqlshack.com/sql-server-cursor-overview-and-examples/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-blue-600 hover:text-blue-800"
+                    >
+                    SQLShack - Advanced Cursor Concepts
+                    </a>
+                </li>
+            </ul>
+        </section>
+
+        <div class="mt-4">
+            <a
+                href="./assets/document/script_cursores_ruc.txt"
+                download="script_cursores_ruc.txt"
+                class="btn-download"
+            >
+            Recursos
+            </a>
+        </div>
+
+        <div class="mt-8 border-t pt-4">
+            <a href="index.html" class="btn-back">Ir a Inicio</a>
+        </div>
+    </main>
+
+    <!-- Footer único -->
+    <div data-include="footer.html"></div>
+
+    
+    <script>
+        // Función para copiar el contenido de cada bloque SQL
+        function copyCode(button) {
+            const code = button.previousElementSibling.innerText;
+            
+            // Verificar si se está utilizando un dispositivo móvil y usar el portapapeles
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    button.innerText = 'Copiado';
+                    setTimeout(() => {
+                        button.innerText = 'Copiar';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error al copiar', err);
+                });
+            } else {
+                // Fallback para navegadores que no soportan Clipboard API
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                button.innerText = 'Copiado';
+                setTimeout(() => {
+                    button.innerText = 'Copiar';
+                }, 2000);
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Espera a que todos los includes terminen de cargarse
+          setTimeout(function() {
+            var dateElement = document.getElementById('date-display');
+            if (!dateElement) return;
+            
+            var months = [
+              "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            
+            var now = new Date();
+            var day = now.getDate();
+            var month = months[now.getMonth()];
+            var year = now.getFullYear();
+            
+            dateElement.innerHTML = month + " " + day + ", " + year;
+          }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+        });
+      </script>
+</body>
+
+</html>

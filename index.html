@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- PWA meta tags - coloca estos antes de cualquier otra cosa -->
+  <meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e213d" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- iOS specific meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Ronald U.">
+
+  <!-- Chrome for Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Etiquetas meta para SEO -->
+  <meta name="description"
+    content="Blog especializado en desarrollo web, ingeniería de datos y tecnologías modernas para desarrolladores por Urbano.Dev Academy." />
+  <meta name="keywords"
+    content="desarrollo web, data engineering, programación, tutoriales, javascript, python, big data, bases de datos, cloud computing" />
+  <meta name="author" content="Urbano.Dev Academy" />
+
+  <!-- Open Graph para compartir en redes sociales -->
+  <meta property="og:title" content="Urbano.Dev Academy - Blog de Desarrollo y Data Engineering" />
+  <meta property="og:description"
+    content="Tutoriales, guías y recursos para desarrolladores web y data engineers. Aprende las mejores prácticas y tecnologías modernas." />
+  <meta property="og:image" content="http://192.168.18.141:5500/img/logo.png" />
+  <meta property="og:url" content="http://192.168.18.141:5500/archivo.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Urbano.Dev Academy" />
+
+  <title>Urbano.Dev Academy - Blog de Desarrollo y Data Engineering</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="./assets/img/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+  <header class="Header">
+    <div class="notification">
+      El proyecto Urbano.Dev Academy se encuentra aún en desarrollo 🛠️
+    </div>
+    <div class="Header__logo-container">
+      <a href="index.html" class="Header__logo">U</a>
+      <div class="Header__welcome">
+        <div class="Header__welcome-text">Bienvenidos 📚</div>
+        <div class="Header__welcome-date" id="date-display"></div>
+      </div>
+    </div>
+    <div class="Header__burger">
+      <div class="Header__burger--bar"></div>
+    </div>
+    <nav class="Header__navigation">
+      <ul class="Menu">
+        <li class="Menu__item">
+          <a href="index.html" class="Menu__link">Inicio</a>
+        </li>
+        <li class="Menu__item">
+          <a href="#" class="Menu__link Menu__link--active">Blog</a>
+        </li>
+        <li class="Menu__item">
+          <a href="https://ronalk35.github.io/" target="_blank" class="Menu__link">Portafolio</a>
+        </li>
+        <li class="Menu__item">
+          <a href="archivo.html" class="Menu__link">Archivos</a>
+        </li>
+        <li class="Menu__item">
+          <a href="index.html" class="Menu__link">Mentorias</a>
+        </li>
+        <li class="Menu__item">
+          <a href="dino_game.html" class="Menu__link">Game</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="Section Section--no--bottom">
+      <div class="Container">
+        <div class="Title-container">
+          <br>
+          <h1 class="Title">Urbano.Dev Academy</h1>
+          <p class="Title-description">Tu centro de conocimiento en Desarrollo de Software y Data Engineering</p>
+        </div>
+        <div class="Section__separator"></div>
+      </div>
+    </section>
+
+    <section class="Section Section--no--top Section--no--bottom">
+      <div class="Container">
+        <div class="Blog-presentation">
+          <div class="Blog-presentation__logo">
+            <img src="/assets/img/logo.png" alt="UrbanoDev Academy Logo" loading="lazy" />
+          </div>
+          <div class="Blog-presentation__content">
+            <p class="Blog-presentation__text">
+              Bienvenido a tu centro de conocimiento especializado en Desarrollo
+              de Software, Bases de Datos y Data Engineering. Ofrecemos contenido
+              técnico de alta calidad, tutoriales prácticos y análisis profundos
+              de las últimas tecnologías. Nuestra misión es proporcionar recursos
+              valiosos tanto para desarrolladores principiantes como
+              experimentados, con un enfoque especial en desarrollo web, SQL Server y
+              arquitecturas de datos modernas.
+            </p>
+          </div>
+        </div>
+
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/bd.jpg" alt="Programación en SQL Server" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">SQL Server</span>
+                <span class="Article__tag">T-SQL</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Programación en SQL Server: Guía Completa de Transact-SQL</h2>
+            <p class="Article__paragraph">
+              Esta guía cubre el uso de identificadores, manejo de variables y control de flujo en Transact-SQL
+              (T-SQL) para SQL Server.
+            </p>
+            <a href="art_one.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+        <br>
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/cursores.png" alt="Cursores y Procedimientos Almacenados" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">SQL Server</span>
+                <span class="Article__tag">Procedimientos</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Cursores y Procedimientos Almacenados: Guía Completa</h2>
+            <p class="Article__paragraph">
+              Se explica el uso de cursores y procedimientos almacenados para mejorar la eficiencia en bases de datos,
+              incluyendo buenas prácticas para su implementación.
+            </p>
+            <a href="art_three.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+        <br>
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/bd_data.png" alt="Recuperación de Datos en SQL" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">SQL</span>
+                <span class="Article__tag">Consultas</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Recuperación de Datos en SQL: Fundamentos y Técnicas Avanzadas</h2>
+            <p class="Article__paragraph">
+              Este artículo examina técnicas clave de recuperación de datos en SQL, desde consultas básicas hasta
+              combinaciones avanzadas de tablas.
+            </p>
+            <a href="art_five.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+        <br>
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/data_network.png" alt="Procedimientos Almacenados" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">SQL</span>
+                <span class="Article__tag">Mejores Prácticas</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Procedimientos Almacenados en SQL: Guía Completa de Implementación</h2>
+            <p class="Article__paragraph">
+              El artículo explica el uso de cursores y procedimientos almacenados en bases de datos para
+              mejorar la eficiencia.
+            </p>
+            <a href="art_four.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+        <br>
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/data_eng.jpg" alt="Data Mesh" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">Data Engineering</span>
+                <span class="Article__tag">Arquitectura</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Arquitectura Data Mesh: El Futuro del Data Engineering</h2>
+            <p class="Article__paragraph">
+              El artículo explora Data Mesh, un enfoque innovador para la gestión de datos en organizaciones
+              grandes.
+            </p>
+            <a href="art_six.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+        <br>
+        <article class="Article">
+          <figure class="Article__picture">
+            <img src="./assets/img/database.png" alt="Recuperación de Datos en SQL" loading="lazy" />
+          </figure>
+          <div class="Article__content">
+            <div class="Article__meta">
+              <time class="Article__date" datetime="2021-03-23">
+                <i class="fas fa-calendar-alt"></i> Marzo 23, 2021
+              </time>
+              <div class="Article__tags">
+                <span class="Article__tag">SQL</span>
+                <span class="Article__tag">Consultas</span>
+              </div>
+            </div>
+            <h2 class="Article__title">Índices y Optimización de Consultas en SQL</h2>
+            <p class="Article__paragraph">
+              Este artículo examina técnicas clave de índices y optimización de datos en SQL, desde consultas básicas
+              hasta
+              combinaciones avanzadas de tablas.
+            </p>
+            <a href="art_two.html" class="Article__button">Leer artículo</a>
+          </div>
+        </article>
+      </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="Footer">
+    <div class="Container">
+      <div class="Footer__content">
+        <p class="Footer__copy">
+          Copyright ©2025 Urbano.Dev Academy v2.0 | Derechos Resevados
+          <strong><a href="#" target="_blank">Ronald.U</a></strong>
+        </p>
+        <ul class="Footer__social">
+          <li>
+            <a href="https://github.com/Ronalk35" target="_blank">
+              <img src="./assets/img/github.png" alt="github" width="20" height="20" />
+            </a>
+          </li>
+          <li>
+            <a href="https://linkedin.com/in/ronaldurbanochavez" target="_blank">
+              <img src="./assets/img/linkedin.png" alt="linkedin" width="20" height="20" />
+            </a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/ronaldurbano.chavez/" target="_blank">
+              <img src="./assets/img/instagram.png" alt="instagram" width="20" height="20" />
+            </a>
+          </li>
+
+
+          <li>
+            <a href="https://www.facebook.com/RonaldUrbanoC?mibextid=ZbWKwL" target="_blank">
+              <img src="./assets/img/facebook.png" alt="facebook" width="20" height="20" />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+  <script src="/assets/js/index.js"></script>
+  <script>
+    // Script para eliminar la notificación después de 3 segundos
+    document.addEventListener("DOMContentLoaded", function () {
+      // Aseguramos que la notificación sea visible inicialmente
+      const notification = document.querySelector('.notification');
+      if (notification) {
+        notification.style.display = 'block'; // Asegura que sea visible
+        notification.classList.add('active'); // Si usas una clase para activarla
+
+        // Establece un tiempo de 5 segundos antes de eliminar la notificación
+        setTimeout(function () {
+          // Primero añadimos una clase para la animación de salida (si la tienes)
+          notification.classList.add('fade-out');
+
+          // Este timeout elimina el elemento del DOM después de la animación
+          setTimeout(function () {
+            if (notification && notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 500); // Tiempo para la animación de salida
+        }, 6000); // Aumentado a 6000ms (6 segundos)
+      }
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Espera a que todos los includes terminen de cargarse
+      setTimeout(function () {
+        var dateElement = document.getElementById('date-display');
+        if (!dateElement) return;
+
+        var months = [
+          "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
+
+        var now = new Date();
+        var day = now.getDate();
+        var month = months[now.getMonth()];
+        var year = now.getFullYear();
+
+        dateElement.innerHTML = month + " " + day + ", " + year;
+      }, 100); // Pequeño retraso para asegurar que nav.html está cargado
+    });
+  </script>
+
+
+</body>
+
+</html>
